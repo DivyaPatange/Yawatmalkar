@@ -8,7 +8,7 @@ use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Auth\AdminController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SubCategoryController;
-
+use App\Http\Controllers\Admin\DoctorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,6 +60,8 @@ Route::prefix('admin')->name('admin.')->group(function() {
     Route::resource('/sub-category', SubCategoryController::class);
     Route::post('/get-sub-category', [SubCategoryController::class, 'getSubCategory'])->name('get.sub-category');
     Route::post('/sub-category/update', [SubCategoryController::class, 'updateSubCategory']);
+    Route::resource('/doctors', DoctorController::class);
+    Route::get('get-subcategory-list', [DoctorController::class, 'getSubCategoryList']);
 });
 
 Auth::routes();

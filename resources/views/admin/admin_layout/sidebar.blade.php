@@ -44,10 +44,10 @@
                     <a href="{{ route('admin.sub-category.index') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-server"></i></span><span class="pcoded-mtext">Sub-Category</span></a>
                 </li>
                 <li class="nav-item pcoded-menu-caption">
-                    <label>Chart & Maps</label>
+                    <label>Registration Form</label>
                 </li>
-                <li data-username="Charts Morris" class="nav-item"><a href="chart-morris.html" class="nav-link "><span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span><span class="pcoded-mtext">Chart</span></a></li>
-                <li data-username="Maps Google" class="nav-item"><a href="map-google.html" class="nav-link "><span class="pcoded-micon"><i class="feather icon-map"></i></span><span class="pcoded-mtext">Maps</span></a></li>
+                <li data-username="Charts Morris" class="nav-item"><a href="{{ route('admin.doctors.index') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span><span class="pcoded-mtext">Doctors Registration</span></a></li>
+                <li data-username="Maps Google" class="nav-item"><a href="map-google.html" class="nav-link "><span class="pcoded-micon"><i class="feather icon-map"></i></span><span class="pcoded-mtext">Lawyer Registration</span></a></li>
                 <li class="nav-item pcoded-menu-caption">
                     <label>Pages</label>
                 </li>
