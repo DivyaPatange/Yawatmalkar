@@ -62,6 +62,9 @@ Route::prefix('admin')->name('admin.')->group(function() {
     Route::post('/sub-category/update', [SubCategoryController::class, 'updateSubCategory']);
     Route::resource('/doctors', DoctorController::class);
     Route::get('get-subcategory-list', [DoctorController::class, 'getSubCategoryList']);
+    Route::post('/doctors/upload-document', [DoctorController::class, 'uploadDocument'])->name('doctor.upload-document');
+    Route::post('/doctors/general-info', [DoctorController::class, 'saveGeneralInfo'])->name('doctor.general-info');
+    Route::get('/doctors/status/{id}', [DoctorController::class, 'status']);
 });
 
 Auth::routes();
