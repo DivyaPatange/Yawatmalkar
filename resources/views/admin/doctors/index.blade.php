@@ -86,6 +86,12 @@ input[type="checkbox"].switch_1{
   input[type="checkbox"].switch_1:checked:after{
 	left: calc(100% - 1.5em);
   }
+.btn{
+    padding:1px 8px;
+}
+.btn > i {
+    margin-right: 0px;
+}
 </style>
 @endsection
 @section('page_title', 'Doctors List')
@@ -94,46 +100,28 @@ input[type="checkbox"].switch_1{
 <a href="{{ route('admin.doctors.index') }}">Doctors List</a>
 @endsection
 @section('content')
-<!-- <div class="row">
-    <div class="col-sm-12">
-        <div class="card">
-            <div class="card-header">
-                <h5>Add Category</h5>
-            </div>
-            <div class="card-body">
-                <form method="POST" id="form-submit">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="category_name">Category <span style="color:red;">*</span><span  style="color:red" id="category_err"> </span></label>
-                                <input type="text" name="category_name" class="form-control" id="category_name" placeholder="Enter Category">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="category_name">Status <span style="color:red;">*</span><span  style="color:red" id="status_err"> </span></label>
-                                <select class="form-control @error('status') is-invalid @enderror" id="status" name="status">
-                                    <option value="">-Select Status-</option>
-                                    <option value="1">Active</option>
-                                    <option value="0">Inactive</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <button type="button" id="submitForm" class="btn btn-primary">Submit</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
+<div class="row">
+    <div class="col-md-12">
+        @if ($message = Session::get('success'))
+		<div class="alert alert-success alert-block mt-3">
+			<button type="button" class="close" data-dismiss="alert">×</button>	
+				<strong>{{ $message }}</strong>
+		</div>
+		@endif
+		@if ($message = Session::get('danger'))
+		<div class="alert alert-danger alert-block mt-3">
+			<button type="button" class="close" data-dismiss="alert">×</button>	
+				<strong>{{ $message }}</strong>
+		</div>
+		@endif
     </div>
-</div> -->
+</div>
 <div class="row">
     <div class="col-sm-12">
         <div class="card">
             <div class="card-header">
                 <h5>Doctors List</h5>
-                <a href="{{ route('admin.doctors.create') }}"><button type="button" class="btn btn-outline-primary float-right" title="" >Add New</button></a>
+                <a href="{{ route('admin.doctors.create') }}"><button type="button" class="btn btn-outline-primary float-right" title="" style="padding:10px 20px">Add New</button></a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -170,6 +158,27 @@ input[type="checkbox"].switch_1{
             </div>
         </div>
     </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Working Shift</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
 </div>
 @endsection 
 @section('customjs')
@@ -213,8 +222,8 @@ $(document).ready(function(){
                     "defaultContent": ''
                 },
                 { data: 'photo', name: 'photo' },
-                { data: 'doctor_name', name: 'doctor_name' },
-                { data: 'doctor_id', name: 'doctor_id'},
+                { data: 'name', name: 'name' },
+                { data: 'employee_id', name: 'employee_id'},
                 { data: 'username', name: 'username'},
                 { data: 'password_1', name: 'password_1'},
                 { data: 'contact_no', name: 'contact_no'},
@@ -238,129 +247,6 @@ $(document).ready(function(){
         }
     });
 })
-
-    function EditModel(obj,bid)
-    {
-        var datastring="bid="+bid;
-        // alert(datastring);
-        $.ajax({
-            type:"POST",
-            url:"{{ route('admin.get.category') }}",
-            data:datastring,
-            cache:false,        
-            success:function(returndata)
-            {
-                // alert(returndata);
-            if (returndata!="0") {
-                $("#myModal").modal('show');
-                var json = JSON.parse(returndata);
-                $("#id").val(json.id);
-                $("#edit_category_name").val(json.category_name);
-                $("#edit_status").val(json.status);
-                // $("#adv_amt").val(json.advance_amt);
-                // $("#total_amt").val(json.total_pay);
-            }
-            }
-        });
-    }
-    function checkSubmit()
-    {
-        var category_name = $("#edit_category_name").val();
-        var status = $("#edit_status").val();
-        var id = $("#id").val().trim();
-        if (category_name=="") {
-            $("#edit_category_err").fadeIn().html("Required");
-            setTimeout(function(){ $("#edit_category_err").fadeOut(); }, 3000);
-            $("#edit_category_name").focus();
-            return false;
-        }
-        if (status=="") {
-            $("#edit_status_err").fadeIn().html("Required");
-            setTimeout(function(){ $("#edit_status_err").fadeOut(); }, 3000);
-            $("#edit_status").focus();
-            return false;
-        }
-        else
-        { 
-            $('#editBrand').attr('disabled',true);
-            var datastring="category_name="+category_name+"&status="+status+"&id="+id;
-            // alert(datastring);
-            $.ajax({
-                type:"POST",
-                url:"{{ url('/admin/category/update') }}",
-                data:datastring,
-                cache:false,        
-                success:function(returndata)
-                {
-                $('#editBrand').attr('disabled',false);
-                $("#myModal").modal('hide');
-                var oTable = $('#zero_config').dataTable(); 
-                oTable.fnDraw(false);
-                toastr.success(returndata.success);
-                
-                // location.reload();
-                // $("#pay").val("");
-                }
-            });
-        }
-    }
-
-    $('body').on('click', '#delete', function () {
-        var id = $(this).data("id");
-  
-        if(confirm("Are You sure want to delete !")){
-            $.ajax({
-                type: "delete",
-                url: "{{ url('admin/category') }}"+'/'+id,
-                success: function (data) {
-                var oTable = $('#zero_config').dataTable(); 
-                oTable.fnDraw(false);
-                toastr.success(data.success);
-                },
-                error: function (data) {
-                    console.log('Error:', data);
-                }
-            });
-        }
-    });
-
-    $('body').on('click', '#submitForm', function () {
-        var category_name = $("#category_name").val();
-        var status = $("#status").val();
-        if (category_name=="") {
-            $("#category_err").fadeIn().html("Required");
-            setTimeout(function(){ $("#category_err").fadeOut(); }, 3000);
-            $("#category_name").focus();
-            return false;
-        }
-        if (status=="") {
-            $("#status_err").fadeIn().html("Required");
-            setTimeout(function(){ $("#status_err").fadeOut(); }, 3000);
-            $("#status").focus();
-            return false;
-        }
-        else
-        { 
-            var datastring="category_name="+category_name+"&status="+status;
-            // alert(datastring);
-            $.ajax({
-                type:"POST",
-                url:"{{ route('admin.category.store') }}",
-                data:datastring,
-                cache:false,        
-                success:function(returndata)
-                {
-                    document.getElementById("form-submit").reset();
-                var oTable = $('#zero_config').dataTable(); 
-                oTable.fnDraw(false);
-                toastr.success(returndata.success);
-                
-                // location.reload();
-                // $("#pay").val("");
-                }
-            });
-        }
-    })
 
 $('body').on('click', '#delete', function () {
     var id = $(this).data("id");

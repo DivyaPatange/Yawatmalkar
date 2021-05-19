@@ -91,7 +91,7 @@ input[type="checkbox"].switch_1{
 @section('page_title', 'Doctors Profile')
 @section('breadcrumb1', 'Home')
 @section('breadcrumb2')
-<a href="{{ route('admin.doctors.show', $doctor->id) }}">Doctor Profile</a>
+<a href="{{ route('admin.doctors.show', $user->id) }}">Doctor Profile</a>
 @endsection
 @section('content')
 <div class="row">
@@ -100,23 +100,25 @@ input[type="checkbox"].switch_1{
         <hr>
     </div>
     <?php 
-        $doctorInfo = DB::table('doctor_infos')->where('doctor_id', $doctor->id)->first();
+        $userInfo = DB::table('user_infos')->where('user_id', $user->id)->first();
     ?>
     <div class="col-md-3">
         <div class="card">
             <div class="card-header text-center"> 
-                <img src="@if(!empty($doctorInfo)){{  URL::asset('DoctorPhoto/'.$doctorInfo->photo) }}@endif" alt="" class="img-fluid" width="100px">
-                <h6 class="mt-3">{{ $doctor->doctor_id }}</h6>
+                <img src="@if(!empty($userInfo)){{  URL::asset('UserPhoto/'.$userInfo->photo) }}@endif" alt="" class="img-fluid" width="100px">
+                <h6 class="mt-3">{{ $user->employee_id }}</h6>
             </div>
             <div class="card-body">
             <?php 
-                $category = DB::table('categories')->where('id', $doctor->category_id)->first();
-                $subCategory = DB::table('sub_categories')->where('id', $doctor->sub_category_id)->first();
+                if(!empty($userInfo)){
+                $category = DB::table('categories')->where('id', $userInfo->category_id)->first();
+                $subCategory = DB::table('sub_categories')->where('id', $userInfo->sub_category_id)->first();
+                }
             ?>
-                <p><b>Category :</b> @if(!empty($category)) {{ $category->category_name }} @endif</p>
-                <p><b>Sub-Category :</b> @if(!empty($subCategory)) {{ $subCategory->sub_category }} @endif</p>
-                <p><b>Experience :</b> {{ $doctor->experience }}</p>
-                <p><b>Qualification :</b> {{ $doctor->qualification }}</p>
+                <p><b>Category :</b>@if(!empty($userInfo)) @if(!empty($category)) {{ $category->category_name }} @endif @endif</p>
+                <p><b>Sub-Category :</b>@if(!empty($userInfo)) @if(!empty($subCategory)) {{ $subCategory->sub_category }} @endif @endif</p>
+                <p><b>Experience :</b>@if(!empty($userInfo)) {{ $userInfo->experience }} @endif</p>
+                <p><b>Qualification :</b>@if(!empty($userInfo)) {{ $userInfo->qualification }} @endif</p>
             </div>
         </div>
     </div>
@@ -139,112 +141,215 @@ input[type="checkbox"].switch_1{
                         <p><b>Doctor Name</b></p>
                     </div>
                     <div class="col-md-4">
-                        <p>: {{ $doctor->doctor_name }}</p>
+                        <p>: {{ $user->name }}</p>
                     </div>
                     <div class="col-md-2">
                         <p><b>Email</b></p>
                     </div>
                     <div class="col-md-4">
-                        <p>: {{ $doctor->email }}</p>
+                        <p>: {{ $user->email }}</p>
                     </div>
                     <div class="col-md-2">
                         <p><b>Category</b></p>
                     </div>
                     <div class="col-md-4">
-                        <p>: @if(!empty($category)) {{ $category->category_name }} @endif</p>
+                        <p>:@if(!empty($userInfo)) @if(!empty($category)) {{ $category->category_name }} @endif @endif</p>
                     </div>
                     <div class="col-md-2">
                         <p><b>Sub Category</b></p>
                     </div>
                     <div class="col-md-4">
-                        <p>: @if(!empty($subCategory)) {{ $subCategory->sub_category }} @endif</p>
+                        <p>:@if(!empty($userInfo)) @if(!empty($subCategory)) {{ $subCategory->sub_category }} @endif @endif</p>
                     </div>
                     <div class="col-md-2">
                         <p><b>Contact No.</b></p>
                     </div>
                     <div class="col-md-4">
-                        <p>: {{ $doctor->contact_no }}</p>
+                        <p>:@if(!empty($userInfo)) {{ $userInfo->contact_no }} @endif</p>
                     </div>
                     <div class="col-md-2">
                         <p><b>Alternate Contact No.</b></p>
                     </div>
                     <div class="col-md-4">
-                        <p>: {{ $doctor->alt_contact_no }}</p>
+                        <p>:@if(!empty($userInfo)) {{ $userInfo->alt_contact_no }} @endif</p>
                     </div>
                     <div class="col-md-2">
                         <p><b>Aadhar No.</b></p>
                     </div>
                     <div class="col-md-4">
-                        <p>: {{ $doctor->aadhar_no }}</p>
+                        <p>:@if(!empty($userInfo)) {{ $userInfo->aadhar_no }} @endif</p>
                     </div>
                     <div class="col-md-2">
                         <p><b>Experience</b></p>
                     </div>
                     <div class="col-md-4">
-                        <p>: {{ $doctor->experience }}</p>
+                        <p>:@if(!empty($userInfo)) {{ $userInfo->experience }} @endif</p>
                     </div>
                     <div class="col-md-2">
                         <p><b>Qualification</b></p>
                     </div>
                     <div class="col-md-4">
-                        <p>: {{ $doctor->qualification }}</p>
+                        <p>:@if(!empty($userInfo)) {{ $userInfo->qualification }} @endif</p>
                     </div>
                     <div class="col-md-2">
                         <p><b>Specialization</b></p>
                     </div>
                     <div class="col-md-4">
-                        <p>: {{ $doctor->specialization }}</p>
+                        <p>:@if(!empty($userInfo)) {{ $userInfo->specialization }} @endif</p>
                     </div>
                     <div class="col-md-2">
                         <p><b>Other Profession</b></p>
                     </div>
                     <div class="col-md-4">
-                        <p>: {{ $doctor->other_profession }}</p>
+                        <p>:@if(!empty($userInfo)) {{ $userInfo->other_profession }} @endif</p>
                     </div>
                     <div class="col-md-2">
                         <p><b>Date Of Birth</b></p>
                     </div>
                     <div class="col-md-4">
-                        <p>: {{ $doctor->dob }}</p>
+                        <p>:@if(!empty($userInfo)) {{ $userInfo->dob }} @endif</p>
                     </div>
                     <div class="col-md-3">
                         <p><b>Office Address</b></p>
                     </div>
                     <div class="col-md-9">
-                        <p>: {{ $doctor->office_address }}</p>
+                        <p>:@if(!empty($userInfo)) {{ $userInfo->office_address }} @endif</p>
                     </div>
                     <div class="col-md-3">
                         <p><b>Residential Address</b></p>
                     </div>
                     <div class="col-md-9">
-                        <p>: {{ $doctor->residential_address }}</p>
+                        <p>:@if(!empty($userInfo)) {{ $userInfo->residential_address }} @endif</p>
                     </div>
                     <div class="col-md-3">
                         <p><b>Expectation</b></p>
                     </div>
                     <div class="col-md-9">
-                        <p>: {{ $doctor->expectation }}</p>
+                        <p>:@if(!empty($userInfo)) {{ $userInfo->expectation }} @endif</p>
                     </div>
                     <div class="col-md-3">
                         <p><b>Achievement</b></p>
                     </div>
                     <div class="col-md-9">
-                        <p>: {{ $doctor->achievements }}</p>
+                        <p>:@if(!empty($userInfo)) {{ $userInfo->achievements }} @endif</p>
                     </div>
                     <div class="col-md-3">
                         <p><b>About Yourself</b></p>
                     </div>
                     <div class="col-md-9">
-                        <p>: {{ $doctor->about_urself }}</p>
+                        <p>:@if(!empty($userInfo)) {{ $userInfo->about_urself }} @endif</p>
                     </div>
                 </div>
             </div>
             <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
-                <p class="mb-0">Ad pariatur nostrud pariatur exercitation ipsum ipsum culpa mollit commodo mollit ex. Aute sunt incididunt amet commodo est sint nisi deserunt pariatur do. Aliquip ex eiusmod voluptate exercitation cillum id incididunt elit sunt. Qui minim sit magna Lorem id et dolore velit Lorem amet exercitation duis deserunt. Anim id labore elit adipisicing ut in id occaecat pariatur ut ullamco ea tempor duis.
-                </p>
+                <div class="row">
+                    @if($userInfo->photo)
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-header">
+                                Photo
+                            </div>
+                            <div class="card-body">
+                                <img src="@if(!empty($userInfo)){{  URL::asset('UserPhoto/'.$userInfo->photo) }}@endif" alt="" class="img-fluid">
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                    @if($userInfo->signature)
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-header">
+                                Signature
+                            </div>
+                            <div class="card-body">
+                                <img src="@if(!empty($userInfo)){{  URL::asset('UserSignature/'.$userInfo->signature) }}@endif" alt="" class="img-fluid">
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                    @if($userInfo->declaration_signed)
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-header">
+                                Declaration Signed
+                            </div>
+                            <div class="card-body">
+                                <img src="@if(!empty($userInfo)){{  URL::asset('UserDeclareSign/'.$userInfo->declaration_signed) }}@endif" alt="" class="img-fluid">
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                    @if($userInfo->mou_signed)
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-header">
+                                MOU Signed
+                            </div>
+                            <div class="card-body">
+                                <img src="@if(!empty($userInfo)){{  URL::asset('UserMouSign/'.$userInfo->mou_signed) }}@endif" alt="" class="img-fluid">
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                </div>
+                <div class="row">
+                    @if($userInfo->agreement)
+                    <div class="col-md-3">
+                        <p><b>Agreement</b></p>
+                        <a href="@if(!empty($userInfo)){{  URL::asset('UserAgreement/'.$userInfo->agreement) }}@endif">Click to View</a>
+                    </div>
+                    @endif
+                    @if($userInfo->bank_passbook)
+                    <div class="col-md-3">
+                        <p><b>Bank Passbook</b></p>
+                        <a href="@if(!empty($userInfo)){{  URL::asset('UserPassbook/'.$userInfo->bank_passbook) }}@endif">Click to View</a>
+                    </div>
+                    @endif
+                    <?php
+                        $certificates = DB::table('user_certificates')->where('user_id', $user->id)->get();
+                    ?>
+                    @foreach($certificates as $c)
+                    <div class="col-md-3">
+                        <p><b>{{ $c->certificate_name }}</b></p>
+                        <a href="{{  URL::asset('UserCertificate/'.$c->certificate_pdf) }}">Click to View</a>
+                    </div>
+                    @endforeach
+                </div>
             </div>
             <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
-                <p class="mb-0">Est quis nulla laborum officia ad nisi ex nostrud culpa Lorem excepteur aliquip dolor aliqua irure ex. Nulla ut duis ipsum nisi elit fugiat commodo sunt reprehenderit laborum veniam eu veniam. Eiusmod minim exercitation fugiat irure ex labore incididunt do fugiat commodo aliquip sit id deserunt reprehenderit aliquip nostrud. Amet ex cupidatat excepteur aute veniam incididunt mollit cupidatat esse irure officia elit do ipsum ullamco Lorem. Ullamco ut ad minim do mollit labore ipsum laboris ipsum commodo sunt tempor enim incididunt. Commodo quis sunt dolore aliquip aute tempor irure magna enim minim reprehenderit. Ullamco consectetur culpa veniam sint cillum aliqua incididunt velit ullamco sunt ullamco quis quis commodo voluptate. Mollit nulla nostrud adipisicing aliqua cupidatat aliqua pariatur mollit voluptate voluptate consequat non.</p>
+                <div class="row">
+                    <div class="col-md-2">
+                        <p><b>You Tube Link</b></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p>: @if(!empty($userInfo)){{ $userInfo->youtube_link }}@endif</p>
+                    </div>
+                    <div class="col-md-2">
+                        <p><b>Working Hour</b></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p>: @if(!empty($userInfo)){{ $userInfo->working_hour }}@endif</p>
+                    </div>
+                    <div class="col-md-2">
+                        <p><b>License</b></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p>: @if(!empty($userInfo)){{ $userInfo->license }}@endif</p>
+                    </div>
+                    <div class="col-md-2">
+                        <p><b>Working Shifts</b></p>
+                    </div>
+                    <div class="col-md-4">
+                        <?php 
+                            $workingHour = DB::table('user_working_hours')->where('user_id', $user->id)->get();
+                        ?>
+                        <ul class="list-unstyled">
+                            @foreach($workingHour as $w)
+                            <li>{{ date("g:i A", strtotime($w->from)) }} - {{ date("g:i A", strtotime($w->to)) }}</li>
+                            @endforeach 
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

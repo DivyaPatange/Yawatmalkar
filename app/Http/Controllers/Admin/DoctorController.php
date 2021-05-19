@@ -6,15 +6,21 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Admin\Category;
 use App\Models\Admin\SubCategory;
-use App\Models\Doctor;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use App\Models\Admin\DoctorWorkingHour;
-use App\Models\Admin\DoctorInfo;
-use App\Models\Admin\DoctorCertificate;
+use App\Models\Admin\UserWorkingHour;
+use App\Models\Admin\UserInfo;
+use App\Models\Admin\UserCertificate;
 use DB;
+use App\Models\Role;
 
 class DoctorController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:admin');
+    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -24,13 +30,13 @@ class DoctorController extends Controller
     {
         if(request()->ajax()) 
         {
-            $data = DB::table('doctors')->where('is_register', 'Yes')
-            ->join('doctor_infos', 'doctor_infos.doctor_id', '=', 'doctors.id')
-            ->select('doctors.*', 'doctor_infos.photo')
+            $data = DB::table('users')->where('is_register', 'Yes')->where('acc_type', 'doctor')
+            ->join('user_infos', 'user_infos.user_id', '=', 'users.id')
+            ->select('users.*', 'user_infos.photo', 'user_infos.contact_no', 'user_infos.experience')
             ->orderBy('id', 'DESC')->get();
             return datatables()->of($data)
             ->addColumn('photo', function($row){
-                $imageUrl = asset('DoctorPhoto/' . $row->photo);
+                $imageUrl = asset('UserPhoto/' . $row->photo);
                 return '<img src="'.$imageUrl.'" width="50px">';
             })
             ->addColumn('status', 'admin.doctors.status')
@@ -68,47 +74,56 @@ class DoctorController extends Controller
      */
     public function store(Request $request)
     {
-        $duplicate = Doctor::where('username', $request->username)->first();
+        $duplicate = User::where('username', $request->username)->where('status', '=' ,1)->where('is_register', '=', 'Yes')->first();
         if(empty($duplicate)){
             $id = mt_rand(100000, 999999);
-            $doctor = new Doctor();
-            $doctor->doctor_name = $request->doctor_name;
-            $doctor->category_id = $request->category_id;
-            $doctor->sub_category_id = $request->sub_category_id;
-            $doctor->contact_no = $request->contact_no;
-            $doctor->alt_contact_no = $request->alt_contact_no;
-            $doctor->aadhar_no = $request->aadhar_no;
-            $doctor->email = $request->email;
-            $doctor->experience = $request->experience;
-            $doctor->qualification = $request->qualification;
-            $doctor->specialization = $request->specialization;
-            $doctor->office_address = $request->office_addr;
-            $doctor->residential_address = $request->residential_addr;
-            $doctor->working_hour = $request->working_hour;
-            $doctor->other_profession = $request->other_profession;
-            $doctor->dob = $request->dob;
-            $doctor->expectation = $request->expectation;
-            $doctor->achievements = $request->achievement;
-            $doctor->about_urself = $request->urself;
-            $doctor->doctor_id = "YWM".$id;
-            $doctor->username = $request->username;
-            $doctor->password = Hash::make($request->password);
-            $doctor->password_1 = $request->password;
-            $doctor->is_register = 'No';
-            $doctor->save();
+            $user = new User();
+            $user->name = $request->doctor_name;
+            $user->employee_id = "YWM".$id;
+            $user->username = $request->username;
+            $user->email = $request->email;
+            $user->password = Hash::make($request->password);
+            $user->password_1 = $request->password;
+            $user->is_register = 'No';
+            $user->acc_type = "doctor";
+            $user->save();
+
+
+            $userInfo = new UserInfo();
+            $userInfo->user_id = $user->id;
+            $userInfo->category_id = $request->category_id;
+            $userInfo->sub_category_id = $request->sub_category_id;
+            $userInfo->contact_no = $request->contact_no;
+            $userInfo->alt_contact_no = $request->alt_contact_no;
+            $userInfo->aadhar_no = $request->aadhar_no;
+            $userInfo->experience = $request->experience;
+            $userInfo->qualification = $request->qualification;
+            $userInfo->specialization = $request->specialization;
+            $userInfo->office_address = $request->office_addr;
+            $userInfo->residential_address = $request->residential_addr;
+            $userInfo->working_hour = $request->working_hour;
+            $userInfo->other_profession = $request->other_profession;
+            $userInfo->dob = $request->dob;
+            $userInfo->expectation = $request->expectation;
+            $userInfo->achievements = $request->achievement;
+            $userInfo->about_urself = $request->urself;
+            $userInfo->save();
+            
             $obj = json_decode($request->Data, true);
             for($i=0; $i < count($obj); $i++)
             {
                 if(($obj[$i]["from"] != '') && ($obj[$i]["to"] != ''))
                 {
-                    $workingHour = new DoctorWorkingHour();
-                    $workingHour->doctor_id = $doctor->id;
+                    $workingHour = new UserWorkingHour();
+                    $workingHour->user_id = $user->id;
                     $workingHour->from = date("H:i", strtotime($obj[$i]["from"]));
                     $workingHour->to = date("H:i", strtotime($obj[$i]["to"]));
                     $workingHour->save();
                 }
             }
-            return response()->json(['success' => 'Record Saved Successfully!', 'id' => $doctor->id]);
+            $userRole = Role::where('acc_type', 'doctor')->first();
+            $user->roles()->attach($userRole);
+            return response()->json(['success' => 'Record Saved Successfully!', 'id' => $user->id]);
         }
         else{
             return response()->json(['error' => 'Username is already in use.']);
@@ -123,8 +138,8 @@ class DoctorController extends Controller
      */
     public function show($id)
     {
-        $doctor = Doctor::findorfail($id);
-        return view('admin.doctors.show', compact('doctor'));
+        $user = User::findorfail($id);
+        return view('admin.doctors.show', compact('user'));
     }
 
     /**
@@ -135,7 +150,11 @@ class DoctorController extends Controller
      */
     public function edit($id)
     {
-        //
+        $category = Category::where('status', 1)->get();
+        $user = User::findorfail($id);
+        $userInfo = UserInfo::where('user_id', $id)->first();
+        $subCategory = SubCategory::where('category_id', $userInfo->category_id)->get();
+        return view('admin.doctors.edit', compact('user', 'category', 'userInfo', 'subCategory'));
     }
 
     /**
@@ -147,7 +166,36 @@ class DoctorController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $input_data = array (
+            'name' => $request->doctor_name,
+            'email' => $request->email,
+        );
+        User::whereId($id)->update($input_data);
+
+        $input_data1 = array (
+            'category_id' => $request->category_id,
+            'sub_category_id' => $request->sub_category_id,
+            'contact_no' => $request->contact_no,
+            'alt_contact_no' => $request->alt_contact_no,
+            'aadhar_no' => $request->aadhar_no,
+            'experience' => $request->experience,
+            'qualification' => $request->qualification,
+            'specialization' => $request->specialization,
+            'working_hour' => $request->working_hour,
+            'office_address' => $request->office_addr,
+            'residential_address' => $request->residential_addr,
+            'other_profession' => $request->other_profession,
+            'dob' => $request->dob,
+            'expectation' => $request->expectation,
+            'achievements' => $request->achievement,
+            'about_urself' => $request->urself,
+            'license' => $request->license,
+            'joining_date' => $request->joining_date,
+            'youtube_link' => $request->link,
+        );
+        $userInfo = UserInfo::where('user_id', $id)->first();
+        UserInfo::whereId($userInfo->id)->update($input_data1);
+        return redirect('/admin/doctors')->with('success', 'Record Updated Successfylly!');
     }
 
     /**
@@ -158,23 +206,24 @@ class DoctorController extends Controller
      */
     public function destroy($id)
     {
-        $doctor = Doctor::findorfail($id);
-        $doctorInfo = DoctorInfo::where('doctor_id', $id)->first();
-        $doctorCerti = DoctorCertificate::where('doctor_id', $id)->get();
-        $doctor->delete();
-        if($doctorInfo->photo){
-            unlink(public_path('DoctorPhoto/'.$doctorInfo->photo));
+        $user = User::findorfail($id);
+        $userInfo = UserInfo::where('user_id', $id)->first();
+        $userCerti = UserCertificate::where('user_id', $id)->get();
+        $user->roles()->detach();
+        $user->delete();
+        if($userInfo->photo){
+            unlink(public_path('UserPhoto/'.$userInfo->photo));
         }
-        if($doctorInfo->signature){
-            unlink(public_path('DoctorSignature/'.$doctorInfo->signature));
+        if($userInfo->signature){
+            unlink(public_path('UserSignature/'.$userInfo->signature));
         }
-        $doctorInfo->delete();
-        if(count($doctorCerti) > 0){
-            foreach($doctorCerti as $d)
+        $userInfo->delete();
+        if(count($userCerti) > 0){
+            foreach($userCerti as $d)
             {
-                $deleteCerti = DoctorCertificate::where('id', $d->id)->first();
+                $deleteCerti = UserCertificate::where('id', $d->id)->first();
                 if($deleteCerti->pdf_file){
-                    unlink(public_path('DoctorCertificate/'.$deleteCerti->pdf_file));
+                    unlink(public_path('UserCertificate/'.$deleteCerti->pdf_file));
                 }
                 $deleteCerti->delete();
             }
@@ -184,27 +233,29 @@ class DoctorController extends Controller
 
     public function uploadDocument(Request $request)
     {
-        $doctor  = DoctorInfo::where('doctor_id', $request->doctor_id)->first();
-        if(empty($doctor)){
-            $doctorInfo = new DoctorInfo();
-            $doctorInfo->doctor_id = $request->doctor_id;
+        $user  = UserInfo::where('user_id', $request->doctor_id)->first();
+        if(!empty($user)){
             $image = $request->file('photo');
             // dd($request->file('photo'));
             if($image != '')
             {
                 $image_name = rand() . '.' . $image->getClientOriginalExtension();
-                $image->move(public_path('DoctorPhoto'), $image_name);
-                $doctorInfo->photo =$image_name;
+                $image->move(public_path('UserPhoto'), $image_name);
+            }
+            else{
+                $image_name = "";
             }
             $image1 = $request->file('signature');
             // dd($request->file('photo'));
             if($image1 != '')
             {
                 $image_name1 = rand() . '.' . $image1->getClientOriginalExtension();
-                $image1->move(public_path('DoctorSignature'), $image_name1);
-                $doctorInfo->signature =$image_name1;
+                $image1->move(public_path('UserSignature'), $image_name1);
             }
-            $doctorInfo->save();
+            else{
+                $image_name1 = "";
+            }
+            $result = UserInfo::where('user_id', $request->doctor_id)->update(['photo' => $image_name, 'signature' => $image_name1]);
         }
         if($request->hasfile('pdf_file'))
         {
@@ -215,7 +266,7 @@ class DoctorController extends Controller
 
                 $name = time().rand(1,100).'.'.$file->extension();
 
-                $file->move(public_path('DoctorCertificate'), $name);  
+                $file->move(public_path('UserCertificate'), $name);  
 
                 $files[] = $name;  
 
@@ -223,31 +274,31 @@ class DoctorController extends Controller
 
         }
         $certificate_name = $request->certificate_name;
-        if((count($certificate_name) > 0) && (count($files) > 0)){
+        if((count($certificate_name) > 0) && $request->hasfile('pdf_file')){
             for($i=0; $i < count($certificate_name); $i++)
             {
                 if(($certificate_name[$i] != "") && ($files[$i] != "")){
-                    $doctorCerti = new DoctorCertificate();
-                    $doctorCerti->doctor_id = $request->doctor_id;
-                    $doctorCerti->certificate_name = $certificate_name[$i];
-                    $doctorCerti->certificate_pdf = $files[$i];
-                    $doctorCerti->save();
+                    $userCerti = new UserCertificate();
+                    $userCerti->user_id = $request->doctor_id;
+                    $userCerti->certificate_name = $certificate_name[$i];
+                    $userCerti->certificate_pdf = $files[$i];
+                    $userCerti->save();
                 }
             }
         }
         return response()->json(['success' => 'Record Saved Successfully!', 'id' => $request->doctor_id]);
-        // return count($certificate_name);
+        // return $files;
     }
 
     public function saveGeneralInfo(Request $request)
     {
-        $doctorInfo = DoctorInfo::where('doctor_id', $request->doctor_id)->first();
+        $userInfo = UserInfo::where('user_id', $request->doctor_id)->first();
         $image = $request->file('passbook');
         if($image != '')
         {
             $image_name = rand() . '.' . $image->getClientOriginalExtension();
             // $image->storeAs('public/tempcourseimg',$image_name);
-            $image->move(public_path('doctorPassbook'), $image_name);
+            $image->move(public_path('UserPassbook'), $image_name);
         }
         else{
             $image_name = "";
@@ -258,7 +309,7 @@ class DoctorController extends Controller
         {
             $image_name1 = rand() . '.' . $image1->getClientOriginalExtension();
             // $image->storeAs('public/tempcourseimg',$image_name);
-            $image1->move(public_path('DoctorAgreement'), $image_name1);
+            $image1->move(public_path('UserAgreement'), $image_name1);
         }
         else{
             $image_name1 = "";
@@ -269,7 +320,7 @@ class DoctorController extends Controller
         {
             $image_name2 = rand() . '.' . $image2->getClientOriginalExtension();
             // $image->storeAs('public/tempcourseimg',$image_name);
-            $image2->move(public_path('DoctorDeclareSign'), $image_name2);
+            $image2->move(public_path('UserDeclareSign'), $image_name2);
         }
         else{
             $image_name2 = "";
@@ -280,7 +331,7 @@ class DoctorController extends Controller
         {
             $image_name3 = rand() . '.' . $image3->getClientOriginalExtension();
             // $image->storeAs('public/tempcourseimg',$image_name);
-            $image3->move(public_path('DoctorMouSign'), $image_name3);
+            $image3->move(public_path('UserMouSign'), $image_name3);
         }
         else{
             $image_name3 = "";
@@ -294,22 +345,148 @@ class DoctorController extends Controller
             'mou_signed' => $image_name3,
             'youtube_link' => $request->link,
         );
-        DoctorInfo::whereId($doctorInfo->id)->update($input_data);
-        Doctor::where('id', $request->doctor_id)->update(['is_register' => 'Yes']);
+        UserInfo::whereId($userInfo->id)->update($input_data);
+        User::where('id', $request->doctor_id)->update(['is_register' => 'Yes']);
         return response()->json(['success' => 'Registration is Successfully Done.']);
     }
 
     public function status(Request $request, $id)
     {
-        $doctor = Doctor::findorfail($id);
-        if($doctor->status == 1)
+        $user = User::findorfail($id);
+        if($user->status == 1)
         {
-            $doctor->status = 0;
+            $user->status = 0;
         }
         else{
-            $doctor->status = 1;
+            $user->status = 1;
         }
-        $doctor->update($request->all());
+        $user->update($request->all());
         return response()->json(['success' => 'Doctor Status Changed Successfully!']);
+    }
+
+    public function editDocument($id)
+    {
+        $userInfo = UserInfo::where('user_id', $id)->first();
+        $certificates = UserCertificate::where('user_id', $id)->get();
+        return view('admin.doctors.edit-document', compact('userInfo', 'certificates'));
+    }
+
+    public function updateDocument(Request $request, $id)
+    {
+        $userInfo = UserInfo::where('user_id', $id)->first();
+        $image_name = $request->hidden_photo;
+        $image = $request->file('photo');
+        if($image != '')
+        {
+            if($userInfo->photo)
+            {
+                unlink(public_path('UserPhoto/'.$userInfo->photo));
+            }
+            $image_name = rand() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('UserPhoto'), $image_name);
+        }
+
+        $image_name1 = $request->hidden_signature;
+        $image1 = $request->file('signature');
+        if($image1 != '')
+        {
+            if($userInfo->signature)
+            {
+                unlink(public_path('UserSignature/'.$userInfo->signature));
+            }
+            $image_name1 = rand() . '.' . $image1->getClientOriginalExtension();
+            $image1->move(public_path('UserSignature'), $image_name1);
+        }
+
+        $image_name2 = $request->hidden_passbook;
+        $image2 = $request->file('passbook');
+        if($image2 != '')
+        {
+            if($userInfo->bank_passbook)
+            {
+                unlink(public_path('UserPassbook/'.$userInfo->bank_passbook));
+            }
+            $image_name2 = rand() . '.' . $image2->getClientOriginalExtension();
+            $image2->move(public_path('UserPassbook'), $image_name2);
+        }
+
+        $image_name3 = $request->hidden_agreement;
+        $image3 = $request->file('agreement');
+        if($image3 != '')
+        {
+            if($userInfo->agreement)
+            {
+                unlink(public_path('UserAgreement/'.$userInfo->agreement));
+            }
+            $image_name3 = rand() . '.' . $image3->getClientOriginalExtension();
+            $image3->move(public_path('UserPassbook'), $image_name3);
+        }
+
+        $image_name4 = $request->hidden_declare;
+        $image4 = $request->file('declare_sign');
+        if($image4 != '')
+        {
+            if($userInfo->declaration_signed)
+            {
+                unlink(public_path('UserDeclareSign/'.$userInfo->declaration_signed));
+            }
+            $image_name4 = rand() . '.' . $image4->getClientOriginalExtension();
+            $image4->move(public_path('UserDeclareSign'), $image_name4);
+        }
+
+        $image_name5 = $request->hidden_mou;
+        $image5 = $request->file('mou_sign');
+        if($image5 != '')
+        {
+            if($userInfo->mou_signed)
+            {
+                unlink(public_path('UserMouSign/'.$userInfo->declaration_signed));
+            }
+            $image_name5 = rand() . '.' . $image5->getClientOriginalExtension();
+            $image5->move(public_path('UserMouSign'), $image_name5);
+        }
+
+        $input_data = array (
+            'photo' => $image_name,
+            'signature' => $image_name1,
+            'bank_passbook' => $image_name2,
+            'agreement' => $image_name3,
+            'declaration_signed' => $image_name4,
+            'mou_signed' => $image_name5,
+        );
+        if($request->certificate_name && $request->hasfile('pdf_file'))
+        {
+            if($request->hasfile('pdf_file'))
+            {
+    
+                foreach($request->file('pdf_file') as $file)
+    
+                {
+    
+                    $name = time().rand(1,100).'.'.$file->extension();
+    
+                    $file->move(public_path('UserCertificate'), $name);  
+    
+                    $files[] = $name;  
+    
+                }
+    
+            }
+            $certificate_name = $request->certificate_name;
+            if((count($certificate_name) > 0) && $request->hasfile('pdf_file')){
+                for($i=0; $i < count($certificate_name); $i++)
+                {
+                    if(($certificate_name[$i] != "") && ($files[$i] != "")){
+                        $userCerti = new UserCertificate();
+                        $userCerti->user_id = $userInfo->user_id;
+                        $userCerti->certificate_name = $certificate_name[$i];
+                        $userCerti->certificate_pdf = $files[$i];
+                        $userCerti->save();
+                    }
+                }
+            }
+        }
+        UserInfo::whereId($userInfo->id)->update($input_data);
+        return redirect('/admin/doctors')->with('success', 'Documents Updated Successfully!');
     }
 }

@@ -9,6 +9,16 @@ use App\Http\Controllers\Auth\AdminController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SubCategoryController;
 use App\Http\Controllers\Admin\DoctorController;
+use App\Http\Controllers\Admin\LawyerController;
+use App\Http\Controllers\Admin\BeauticianController;
+use App\Http\Controllers\Admin\DoctorScheduleController;
+use App\Http\Controllers\Admin\LawyerScheduleController;
+use App\Http\Controllers\Admin\BeauticianScheduleController;
+
+
+use App\Http\Controllers\User\ProfileController;
+use App\Http\Controllers\User\UserScheduleController;
+use App\Http\Controllers\User\ChangePasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -65,8 +75,49 @@ Route::prefix('admin')->name('admin.')->group(function() {
     Route::post('/doctors/upload-document', [DoctorController::class, 'uploadDocument'])->name('doctor.upload-document');
     Route::post('/doctors/general-info', [DoctorController::class, 'saveGeneralInfo'])->name('doctor.general-info');
     Route::get('/doctors/status/{id}', [DoctorController::class, 'status']);
+    Route::get('/doctor/edit-document/{id}', [DoctorController::class, 'editDocument'])->name('doctors.edit-document');
+    Route::put('/doctor/update-document/{id}', [DoctorController::class, 'updateDocument'])->name('doctors.update-document');
+
+    Route::resource('/lawyers', LawyerController::class);
+    Route::post('/lawyers/upload-document', [LawyerController::class, 'uploadDocument'])->name('lawyer.upload-document');
+    Route::post('/lawyers/general-info', [LawyerController::class, 'saveGeneralInfo'])->name('lawyer.general-info');
+    Route::get('/lawyers/status/{id}', [LawyerController::class, 'status']);
+    Route::get('/lawyer/edit-document/{id}', [LawyerController::class, 'editDocument'])->name('lawyers.edit-document');
+    Route::put('/lawyer/update-document/{id}', [LawyerController::class, 'updateDocument'])->name('lawyers.update-document');
+
+    Route::resource('/beautician', BeauticianController::class);
+    Route::post('/beautician/upload-document', [BeauticianController::class, 'uploadDocument'])->name('beautician.upload-document');
+    Route::post('/beautician/general-info', [BeauticianController::class, 'saveGeneralInfo'])->name('beautician.general-info');
+    Route::get('/beautician/status/{id}', [BeauticianController::class, 'status']);
+    Route::get('/beautician/edit-document/{id}', [BeauticianController::class, 'editDocument'])->name('beautician.edit-document');
+    Route::put('/beautician/update-document/{id}', [BeauticianController::class, 'updateDocument'])->name('beautician.update-document');
+
+    Route::resource('/doctor-schedule', DoctorScheduleController::class);
+    Route::get('/doctor-schedule/status/{id}', [DoctorScheduleController::class, 'status']);
+    Route::post('/get-doctor-schedule', [DoctorScheduleController::class, 'getDoctorSchedule'])->name('get.doctor-schedule');
+    Route::post('/doctor-schedule/update', [DoctorScheduleController::class, 'updateDoctorSchedule']);
+
+    Route::resource('/lawyer-schedule', LawyerScheduleController::class);
+    Route::get('/lawyer-schedule/status/{id}', [LawyerScheduleController::class, 'status']);
+    Route::post('/get-lawyer-schedule', [LawyerScheduleController::class, 'getLawyerSchedule'])->name('get.lawyer-schedule');
+    Route::post('/lawyer-schedule/update', [LawyerScheduleController::class, 'updateLawyerSchedule']);
+
+    Route::resource('/beautician-schedule', BeauticianScheduleController::class);
+    Route::get('/beautician-schedule/status/{id}', [BeauticianScheduleController::class, 'status']);
+    Route::post('/get-beautician-schedule', [BeauticianScheduleController::class, 'getBeauticianSchedule'])->name('get.beautician-schedule');
+    Route::post('/beautician-schedule/update', [BeauticianScheduleController::class, 'updateBeauticianSchedule']);
 });
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::prefix('user')->name('user.')->group(function() {
+    Route::resource('/profile', ProfileController::class);
+    Route::get('get-subcategory-list', [ProfileController::class, 'getSubCategoryList']);
+    Route::resource('/schedule', UserScheduleController::class);
+    Route::get('/schedule/status/{id}', [UserScheduleController::class, 'status']);
+    Route::post('/get-schedule', [UserScheduleController::class, 'getSchedule'])->name('get.schedule');
+    Route::post('/schedule/update', [UserScheduleController::class, 'updateSchedule']);
+    Route::get('/schedule/get-list', [UserScheduleController::class, 'getList'])->name('schedule.getList');
+    Route::resource('change-password', ChangePasswordController::class);
+});

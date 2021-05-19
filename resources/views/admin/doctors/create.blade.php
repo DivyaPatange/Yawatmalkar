@@ -401,6 +401,8 @@ $('body').on('click', '#submitForm', function () {
     var urself = $("#urself").val();
     var username = $("#username").val();
     var password = $("#password").val();
+    var from = $("input[name=from]").val();
+    var to = $("input[name=to]").val();
     var TableData = new Array();
     $('#dynamic_field tr').each(function(row, tr) {
         TableData[row] = {
@@ -421,6 +423,18 @@ $('body').on('click', '#submitForm', function () {
         $("#experience_err").fadeIn().html("Required");
         setTimeout(function(){ $("#experience_err").fadeOut(); }, 3000);
         $("#experience").focus();
+        return false;
+    }
+    if (from == "") {
+        $("#work_shift_err").fadeIn().html("Required");
+        setTimeout(function(){ $("#work_shift_err").fadeOut(); }, 3000);
+        $("input[name=from]").focus();
+        return false;
+    }
+    if (to == "") {
+        $("#work_shift_err").fadeIn().html("Required");
+        setTimeout(function(){ $("#work_shift_err").fadeOut(); }, 3000);
+        $("input[name=to]").focus();
         return false;
     }
     if (specialization=="") {
@@ -479,7 +493,6 @@ $('body').on('click', '#submitForm', function () {
 $('body').on('submit', '#form-submit1', function (event) {
     event.preventDefault();
     var photo = $("#photo").val();
-    var file_size = $('#photo')[0].files[0].size;
     
     var exts = ['jpg','jpeg','png'];
     var formdata = new FormData(this);
@@ -504,6 +517,8 @@ $('body').on('submit', '#form-submit1', function (event) {
             $("#photo").focus();
             return false;
         }
+        
+        var file_size = $('#photo')[0].files[0].size;
     }
     if(file_size>300000) {
         $("#photo_err").fadeIn().html("File Size should be less than 300kb");

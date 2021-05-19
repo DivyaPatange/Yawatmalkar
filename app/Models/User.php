@@ -19,7 +19,13 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'employee_id',
+        'username',
         'password',
+        'password_1',
+        'is_register',
+        'status',
+        'acc_type',
     ];
 
     /**
@@ -40,4 +46,26 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function roles()
+    {
+        return $this->belongsToMany('App\Models\Role');
+    }
+    public function hasAnyRoles($roles)
+    {
+        if($this->roles()->whereIn('acc_type', $roles)->first())
+        {
+            return true;
+        }
+        return false;
+    }
+    
+    public function hasRole($role)
+    {
+        if($this->roles()->where('acc_type', $role)->first())
+        {
+            return true;
+        }
+        return false;
+    }
 }

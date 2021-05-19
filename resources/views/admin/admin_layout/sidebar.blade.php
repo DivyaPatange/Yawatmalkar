@@ -47,15 +47,17 @@
                     <label>Registration Form</label>
                 </li>
                 <li data-username="Charts Morris" class="nav-item"><a href="{{ route('admin.doctors.index') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span><span class="pcoded-mtext">Doctors Registration</span></a></li>
-                <li data-username="Maps Google" class="nav-item"><a href="map-google.html" class="nav-link "><span class="pcoded-micon"><i class="feather icon-map"></i></span><span class="pcoded-mtext">Lawyer Registration</span></a></li>
+                <li data-username="Maps Google" class="nav-item"><a href="{{ route('admin.lawyers.index') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-map"></i></span><span class="pcoded-mtext">Lawyer Registration</span></a></li>
+                <li data-username="Charts Morris" class="nav-item"><a href="{{ route('admin.beautician.index') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span><span class="pcoded-mtext">Beautician Registration</span></a></li>
                 <li class="nav-item pcoded-menu-caption">
-                    <label>Pages</label>
+                    <label>Schedule Data</label>
                 </li>
                 <li data-username="Authentication Sign up Sign in reset password Change password Personal information profile settings map form subscribe" class="nav-item pcoded-hasmenu">
-                    <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="feather icon-lock"></i></span><span class="pcoded-mtext">Authentication</span></a>
+                    <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="feather icon-lock"></i></span><span class="pcoded-mtext">Schedule</span></a>
                     <ul class="pcoded-submenu">
-                        <li class=""><a href="auth-signup.html" class="" target="_blank">Sign up</a></li>
-                        <li class=""><a href="auth-signin.html" class="" target="_blank">Sign in</a></li>
+                        <li class=""><a href="{{ route('admin.doctor-schedule.index') }}" class="">Doctor Schedule</a></li>
+                        <li class=""><a href="{{ route('admin.lawyer-schedule.index') }}" class="">Lawyer Schedule</a></li>
+                        <li class=""><a href="{{ route('admin.beautician-schedule.index') }}" class="">Beautician Schedule</a></li>
                     </ul>
                 </li>
                 <li data-username="Sample Page" class="nav-item"><a href="sample-page.html" class="nav-link"><span class="pcoded-micon"><i class="feather icon-sidebar"></i></span><span class="pcoded-mtext">Sample page</span></a></li>
