@@ -14,7 +14,7 @@ use App\Http\Controllers\Admin\BeauticianController;
 use App\Http\Controllers\Admin\DoctorScheduleController;
 use App\Http\Controllers\Admin\LawyerScheduleController;
 use App\Http\Controllers\Admin\BeauticianScheduleController;
-
+use App\Http\Controllers\Admin\PagesController;
 
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\UserScheduleController;
@@ -32,7 +32,21 @@ use App\Http\Controllers\User\ChangePasswordController;
 */
 
 Route::get('/', function () {
-    return view('admin.login');
+    return view('frontEnd.index');
+});
+
+Route::get('beauty', function () {
+    return view('frontEnd.beauty');
+});
+
+Route::get('doctors', function () {
+    return view('frontEnd.doctors');
+});
+Route::get('dailyneeds', function () {
+    return view('frontEnd.dailyneeds');
+});
+Route::get('electricals', function () {
+    return view('frontEnd.electricals');
 });
 
 Route::get('/clear-cache', function () {
@@ -106,6 +120,10 @@ Route::prefix('admin')->name('admin.')->group(function() {
     Route::get('/beautician-schedule/status/{id}', [BeauticianScheduleController::class, 'status']);
     Route::post('/get-beautician-schedule', [BeauticianScheduleController::class, 'getBeauticianSchedule'])->name('get.beautician-schedule');
     Route::post('/beautician-schedule/update', [BeauticianScheduleController::class, 'updateBeauticianSchedule']);
+
+    Route::resource('/pages', PagesController::class);
+    Route::post('/get-page', [PagesController::class, 'getPage'])->name('get.page');
+    Route::post('/get/update', [PagesController::class, 'updatePage']);
 });
 
 Auth::routes();
