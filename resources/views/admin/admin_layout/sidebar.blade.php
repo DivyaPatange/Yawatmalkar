@@ -23,7 +23,7 @@
                         <li class=""><a href="{{ route('admin.pages.index') }}" class="">Pages</a></li>
                         <li class=""><a href="{{ route('admin.banner-image.index') }}" class="">Banner Image</a></li>
                         <li class=""><a href="{{ route('admin.testimonials.index') }}" class="">Testimonials</a></li>
-                        <li class=""><a href="bc_collapse.html" class="">Collapse</a></li>
+                        <li class=""><a href="{{ route('admin.flashes-upcoming.index') }}" class="">Flashes & Upcomings</a></li>
                         <li class=""><a href="bc_tabs.html" class="">Tabs & pills</a></li>
                         <li class=""><a href="bc_typography.html" class="">Typography</a></li>
 

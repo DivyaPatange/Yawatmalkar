@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\BeauticianScheduleController;
 use App\Http\Controllers\Admin\PagesController;
 use App\Http\Controllers\Admin\BannerImageController;
 use App\Http\Controllers\Admin\TestimonialController;
+use App\Http\Controllers\Admin\FlashesController;
 
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\UserScheduleController;
@@ -132,7 +133,10 @@ Route::prefix('admin')->name('admin.')->group(function() {
     Route::post('/get-banner-image', [BannerImageController::class, 'getBannerImage'])->name('get.banner-image');
     Route::post('/banner-image/update', [BannerImageController::class, 'updateBannerImage']);
 
-    Route::resource('/testimonials', TestimonialController::class);;
+    Route::resource('/testimonials', TestimonialController::class);
+    Route::resource('/flashes-upcoming', FlashesController::class);
+    Route::post('/get-flashes-upcoming', [FlashesController::class, 'getFlashesUpcoming'])->name('get.flashes-upcoming');
+    Route::post('/flashes-upcoming/update', [FlashesController::class, 'updateFlashesUpcoming']);
 });
 
 Auth::routes();
