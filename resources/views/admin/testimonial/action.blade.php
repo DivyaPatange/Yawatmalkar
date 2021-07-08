@@ -1,0 +1,2 @@
+<a href="{{ route('admin.testimonials.edit', $id) }}"><button type="button" class="btn btn-square btn-primary">Edit</button></a>
+<a href="javascript:void(0)" id="delete" data-id="{{ $id }}"><button type="button" class="btn btn-square btn-danger">Delete</button></a>

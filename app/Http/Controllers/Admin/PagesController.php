@@ -129,6 +129,8 @@ class PagesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $page = Page::findorfail($id);
+        $page->delete();
+        return response()->json(['success' => 'Page Name Deleted Successfully!']);
     }
 }

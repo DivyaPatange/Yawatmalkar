@@ -15,6 +15,8 @@ use App\Http\Controllers\Admin\DoctorScheduleController;
 use App\Http\Controllers\Admin\LawyerScheduleController;
 use App\Http\Controllers\Admin\BeauticianScheduleController;
 use App\Http\Controllers\Admin\PagesController;
+use App\Http\Controllers\Admin\BannerImageController;
+use App\Http\Controllers\Admin\TestimonialController;
 
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\UserScheduleController;
@@ -123,7 +125,14 @@ Route::prefix('admin')->name('admin.')->group(function() {
 
     Route::resource('/pages', PagesController::class);
     Route::post('/get-page', [PagesController::class, 'getPage'])->name('get.page');
-    Route::post('/get/update', [PagesController::class, 'updatePage']);
+    Route::post('/page/update', [PagesController::class, 'updatePage']);
+
+    // Banner Image Route
+    Route::resource('/banner-image', BannerImageController::class);
+    Route::post('/get-banner-image', [BannerImageController::class, 'getBannerImage'])->name('get.banner-image');
+    Route::post('/banner-image/update', [BannerImageController::class, 'updateBannerImage']);
+
+    Route::resource('/testimonials', TestimonialController::class);;
 });
 
 Auth::routes();

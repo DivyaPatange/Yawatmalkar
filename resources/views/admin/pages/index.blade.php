@@ -221,7 +221,7 @@ $.ajaxSetup({
         if(confirm("Are You sure want to delete !")){
             $.ajax({
                 type: "delete",
-                url: "{{ url('admin/page') }}"+'/'+id,
+                url: "{{ url('admin/pages') }}"+'/'+id,
                 success: function (data) {
                 var oTable = $('#zero_config').dataTable(); 
                 oTable.fnDraw(false);
