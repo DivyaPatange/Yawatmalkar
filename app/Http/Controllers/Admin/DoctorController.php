@@ -74,7 +74,7 @@ class DoctorController extends Controller
      */
     public function store(Request $request)
     {
-        $duplicate = User::where('username', $request->username)->where('status', '=' ,1)->where('is_register', '=', 'Yes')->first();
+        $duplicate = User::where('username', $request->username)->where('is_register', '=', 'Yes')->first();
         if(empty($duplicate)){
             $id = mt_rand(100000, 999999);
             $user = new User();

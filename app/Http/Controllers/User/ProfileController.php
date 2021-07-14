@@ -85,7 +85,8 @@ class ProfileController extends Controller
         $user = User::findorfail($id);
         $userInfo = UserInfo::where('user_id', $id)->first();
         $subCategory = SubCategory::where('category_id', $userInfo->category_id)->get();
-        return view('auth.profile.edit', compact('user', 'userInfo', 'category', 'subCategory'));
+        $workingHour = UserWorkingHour::where('user_id', $id)->get();
+        return view('auth.profile.edit', compact('user', 'userInfo', 'category', 'subCategory', 'workingHour'));
     }
 
     /**
@@ -116,11 +117,38 @@ class ProfileController extends Controller
             'residential_address' => $request->residential_addr,
             'other_profession' => $request->other_profession,
             'dob' => $request->dob,
-            'expectation' => $request->expectation
+            'expectation' => $request->expectation, 
+            'busi_year' => $request->busi_year,
+            'serve_capacity' => $request->serve_capacity,
         );
         $userInfo = UserInfo::where('user_id', $id)->first();
         UserInfo::whereId($userInfo->id)->update($input_data1);
         return response()->json(['success' => 'Profile Updated Successfully!']);
+    }
+
+    public function updateDetails(Request $request, $id)
+    {
+        $input_data1 = array (
+            'achievements' => $request->achievement,
+            'about_urself' => $request->urself,
+            'license' => $request->license,
+            'joining_date' => $request->joining_date,
+            'youtube_link' => $request->link,
+        );
+        $userInfo = UserInfo::where('user_id', $id)->first();
+        UserInfo::whereId($userInfo->id)->update($input_data1);
+        return response()->json(['success' => 'Profile Updated Successfully!']);
+    }
+
+    public function updateWorkingHour(Request $request, $id)
+    {
+        $workingHour = UserWorkingHour::findorfail($id);
+        $input_data = array(
+            'from' => date("H:i", strtotime($request->start_time)),
+            'to' => date("H:i", strtotime($request->end_time)),
+        );
+        UserWorkingHour::whereId($id)->update($input_data);
+        return response()->json(['success' => 'Working Hour Updated Successfully!']);
     }
 
     /**

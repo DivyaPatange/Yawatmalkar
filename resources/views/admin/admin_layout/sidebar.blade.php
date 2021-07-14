@@ -24,11 +24,11 @@
                         <li class=""><a href="{{ route('admin.banner-image.index') }}" class="">Banner Image</a></li>
                         <li class=""><a href="{{ route('admin.testimonials.index') }}" class="">Testimonials</a></li>
                         <li class=""><a href="{{ route('admin.flashes-upcoming.index') }}" class="">Flashes & Upcomings</a></li>
-                        <li class=""><a href="bc_tabs.html" class="">Tabs & pills</a></li>
-                        <li class=""><a href="bc_typography.html" class="">Typography</a></li>
+                        <!-- <li class=""><a href="bc_tabs.html" class="">Tabs & pills</a></li>
+                        <li class=""><a href="bc_typography.html" class="">Typography</a></li> -->
 
 
-                        <li class=""><a href="icon-feather.html" class="">Feather<span class="pcoded-badge label label-danger">NEW</span></a></li>
+                        <!-- <li class=""><a href="icon-feather.html" class="">Feather<span class="pcoded-badge label label-danger">NEW</span></a></li> -->
                     </ul>
                 </li>
                 <li class="nav-item pcoded-menu-caption">
@@ -46,6 +46,8 @@
                 <li data-username="Charts Morris" class="nav-item"><a href="{{ route('admin.doctors.index') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span><span class="pcoded-mtext">Doctors Registration</span></a></li>
                 <li data-username="Maps Google" class="nav-item"><a href="{{ route('admin.lawyers.index') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-map"></i></span><span class="pcoded-mtext">Lawyer Registration</span></a></li>
                 <li data-username="Charts Morris" class="nav-item"><a href="{{ route('admin.beautician.index') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span><span class="pcoded-mtext">Beautician Registration</span></a></li>
+                <li data-username="Charts Morris" class="nav-item"><a href="{{ route('admin.daily-needs.index') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-map"></i></span><span class="pcoded-mtext">Daily Needs Registration</span></a></li>
+
                 <li class="nav-item pcoded-menu-caption">
                     <label>Schedule Data</label>
                 </li>

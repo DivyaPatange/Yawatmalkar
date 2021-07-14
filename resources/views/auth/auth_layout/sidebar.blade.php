@@ -11,8 +11,10 @@
                 </li>
 
                 <li class="label">Apps</li>
+                @can('manage-roles')
                 <li><a href="{{ route('user.schedule.index') }}"><i class="ti-calendar"></i> Schedule Data </a></li>
                 <li><a href="app-email.html"><i class="ti-email"></i> Appoitment</a></li>
+                @endcan
                 <li><a href="{{ route('user.profile.index') }}"><i class="ti-user"></i> Profile</a></li>
                 <!-- <li><a href="app-widget-card.html"><i class="ti-layout-grid2-alt"></i> Widget</a></li>
                 <li class="label">Features</li>

@@ -18,5 +18,6 @@ class RolesTableSeeder extends Seeder
         Role::create(['acc_type' => 'doctor']);
         Role::create(['acc_type' => 'lawyer']);
         Role::create(['acc_type' => 'beautician']);
+        Role::create(['acc_type' => 'provider']);
     }
 }

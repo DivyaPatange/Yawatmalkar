@@ -14,14 +14,13 @@ use App\Models\Admin\UserCertificate;
 use DB;
 use App\Models\Role;
 
-class LawyerController extends Controller
+class DailyNeedsController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware('auth:admin');
-    }
-    
+    } 
+
     /**
      * Display a listing of the resource.
      *
@@ -31,22 +30,22 @@ class LawyerController extends Controller
     {
         if(request()->ajax()) 
         {
-            $data = DB::table('users')->where('is_register', 'Yes')->where('acc_type', 'lawyer')
+            $data = DB::table('users')->where('is_register', 'Yes')->where('acc_type', 'provider')
             ->join('user_infos', 'user_infos.user_id', '=', 'users.id')
-            ->select('users.*', 'user_infos.photo', 'user_infos.contact_no', 'user_infos.experience')
+            ->select('users.*', 'user_infos.photo', 'user_infos.contact_no', 'user_infos.busi_year', 'user_infos.serve_capacity')
             ->orderBy('id', 'DESC')->get();
             return datatables()->of($data)
             ->addColumn('photo', function($row){
                 $imageUrl = asset('UserPhoto/' . $row->photo);
                 return '<img src="'.$imageUrl.'" width="50px">';
             })
-            ->addColumn('status', 'admin.lawyers.status')
-            ->addColumn('action', 'admin.lawyers.action')
+            ->addColumn('status', 'admin.daily-needs.status')
+            ->addColumn('action', 'admin.daily-needs.action')
             ->rawColumns(['action','status', 'photo'])
             ->addIndexColumn()
             ->make(true);
         }
-        return view('admin.lawyers.index');
+        return view('admin.daily-needs.index');
     }
 
     /**
@@ -57,7 +56,7 @@ class LawyerController extends Controller
     public function create()
     {
         $category = Category::where('status', 1)->get();
-        return view('admin.lawyers.create', compact('category'));
+        return view('admin.daily-needs.create', compact('category'));
     }
 
     /**
@@ -72,15 +71,16 @@ class LawyerController extends Controller
         if(empty($duplicate)){
             $id = mt_rand(100000, 999999);
             $user = new User();
-            $user->name = $request->lawyer_name;
-            $user->email = $request->email;
+            $user->name = $request->provider_name;
             $user->employee_id = "YWM".$id;
             $user->username = $request->username;
+            $user->email = $request->email;
             $user->password = Hash::make($request->password);
             $user->password_1 = $request->password;
-            $user->acc_type = "lawyer";
             $user->is_register = 'No';
+            $user->acc_type = "provider";
             $user->save();
+
 
             $userInfo = new UserInfo();
             $userInfo->user_id = $user->id;
@@ -89,19 +89,17 @@ class LawyerController extends Controller
             $userInfo->contact_no = $request->contact_no;
             $userInfo->alt_contact_no = $request->alt_contact_no;
             $userInfo->aadhar_no = $request->aadhar_no;
-            $userInfo->experience = $request->experience;
-            $userInfo->qualification = $request->qualification;
-            $userInfo->specialization = $request->specialization;
             $userInfo->office_address = $request->office_addr;
             $userInfo->residential_address = $request->residential_addr;
             $userInfo->working_hour = $request->working_hour;
             $userInfo->other_profession = $request->other_profession;
             $userInfo->dob = $request->dob;
             $userInfo->expectation = $request->expectation;
-            $userInfo->achievements = $request->achievement;
             $userInfo->about_urself = $request->urself;
+            $userInfo->busi_year = $request->busi_year;
+            $userInfo->serve_capacity = $request->serve_capacity;
             $userInfo->save();
-
+            
             $obj = json_decode($request->Data, true);
             for($i=0; $i < count($obj); $i++)
             {
@@ -114,7 +112,7 @@ class LawyerController extends Controller
                     $workingHour->save();
                 }
             }
-            $userRole = Role::where('acc_type', 'lawyer')->first();
+            $userRole = Role::where('acc_type', 'provider')->first();
             $user->roles()->attach($userRole);
             return response()->json(['success' => 'Record Saved Successfully!', 'id' => $user->id]);
         }
@@ -131,8 +129,8 @@ class LawyerController extends Controller
      */
     public function show($id)
     {
-        $lawyer = User::findorfail($id);
-        return view('admin.lawyers.show', compact('lawyer'));
+        $user = User::findorfail($id);
+        return view('admin.daily-needs.show', compact('user'));
     }
 
     /**
@@ -147,7 +145,7 @@ class LawyerController extends Controller
         $user = User::findorfail($id);
         $userInfo = UserInfo::where('user_id', $id)->first();
         $subCategory = SubCategory::where('category_id', $userInfo->category_id)->get();
-        return view('admin.lawyers.edit', compact('user', 'category', 'userInfo', 'subCategory'));
+        return view('admin.daily-needs.edit', compact('user', 'category', 'userInfo', 'subCategory'));
     }
 
     /**
@@ -160,7 +158,7 @@ class LawyerController extends Controller
     public function update(Request $request, $id)
     {
         $input_data = array (
-            'name' => $request->lawyer_name,
+            'name' => $request->provider_name,
             'email' => $request->email,
         );
         User::whereId($id)->update($input_data);
@@ -171,16 +169,14 @@ class LawyerController extends Controller
             'contact_no' => $request->contact_no,
             'alt_contact_no' => $request->alt_contact_no,
             'aadhar_no' => $request->aadhar_no,
-            'experience' => $request->experience,
-            'qualification' => $request->qualification,
-            'specialization' => $request->specialization,
+            'busi_year' => $request->busi_year,
+            'serve_capacity' => $request->serve_capacity,
             'working_hour' => $request->working_hour,
             'office_address' => $request->office_addr,
             'residential_address' => $request->residential_addr,
             'other_profession' => $request->other_profession,
             'dob' => $request->dob,
             'expectation' => $request->expectation,
-            'achievements' => $request->achievement,
             'about_urself' => $request->urself,
             'license' => $request->license,
             'joining_date' => $request->joining_date,
@@ -188,7 +184,7 @@ class LawyerController extends Controller
         );
         $userInfo = UserInfo::where('user_id', $id)->first();
         UserInfo::whereId($userInfo->id)->update($input_data1);
-        return redirect('/admin/lawyers')->with('success', 'Record Updated Successfylly!');
+        return redirect('/admin/daily-needs')->with('success', 'Record Updated Successfylly!');
     }
 
     /**
@@ -226,8 +222,8 @@ class LawyerController extends Controller
 
     public function uploadDocument(Request $request)
     {
-        $lawyer  = UserInfo::where('user_id', $request->lawyer_id)->first();
-        if(!empty($lawyer)){
+        $user  = UserInfo::where('user_id', $request->provider_id)->first();
+        if(!empty($user)){
             $image = $request->file('photo');
             // dd($request->file('photo'));
             if($image != '')
@@ -248,7 +244,7 @@ class LawyerController extends Controller
             else{
                 $image_name1 = "";
             }
-            $result = UserInfo::where('user_id', $request->lawyer_id)->update(['photo' => $image_name, 'signature' => $image_name1]);
+            $result = UserInfo::where('user_id', $request->provider_id)->update(['photo' => $image_name, 'signature' => $image_name1]);
         }
         if($request->hasfile('pdf_file'))
         {
@@ -271,21 +267,21 @@ class LawyerController extends Controller
             for($i=0; $i < count($certificate_name); $i++)
             {
                 if(($certificate_name[$i] != "") && ($files[$i] != "")){
-                    $lawyerCerti = new UserCertificate();
-                    $lawyerCerti->user_id = $request->lawyer_id;
-                    $lawyerCerti->certificate_name = $certificate_name[$i];
-                    $lawyerCerti->certificate_pdf = $files[$i];
-                    $lawyerCerti->save();
+                    $userCerti = new UserCertificate();
+                    $userCerti->user_id = $request->provider_id;
+                    $userCerti->certificate_name = $certificate_name[$i];
+                    $userCerti->certificate_pdf = $files[$i];
+                    $userCerti->save();
                 }
             }
         }
-        return response()->json(['success' => 'Record Saved Successfully!', 'id' => $request->lawyer_id]);
+        return response()->json(['success' => 'Record Saved Successfully!', 'id' => $request->provider_id]);
         // return $files;
     }
 
     public function saveGeneralInfo(Request $request)
     {
-        $lawyerInfo = UserInfo::where('user_id', $request->lawyer_id)->first();
+        $userInfo = UserInfo::where('user_id', $request->provider_id)->first();
         $image = $request->file('passbook');
         if($image != '')
         {
@@ -338,30 +334,30 @@ class LawyerController extends Controller
             'mou_signed' => $image_name3,
             'youtube_link' => $request->link,
         );
-        UserInfo::whereId($lawyerInfo->id)->update($input_data);
-        User::where('id', $request->lawyer_id)->update(['is_register' => 'Yes']);
+        UserInfo::whereId($userInfo->id)->update($input_data);
+        User::where('id', $request->provider_id)->update(['is_register' => 'Yes']);
         return response()->json(['success' => 'Registration is Successfully Done.']);
     }
 
     public function status(Request $request, $id)
     {
-        $lawyer = User::findorfail($id);
-        if($lawyer->status == 1)
+        $user = User::findorfail($id);
+        if($user->status == 1)
         {
-            $lawyer->status = 0;
+            $user->status = 0;
         }
         else{
-            $lawyer->status = 1;
+            $user->status = 1;
         }
-        $lawyer->update($request->all());
-        return response()->json(['success' => 'Lawyer Status Changed Successfully!']);
+        $user->update($request->all());
+        return response()->json(['success' => 'Service Provider Status Changed Successfully!']);
     }
 
     public function editDocument($id)
     {
         $userInfo = UserInfo::where('user_id', $id)->first();
         $certificates = UserCertificate::where('user_id', $id)->get();
-        return view('admin.lawyers.edit-document', compact('userInfo', 'certificates'));
+        return view('admin.daily-needs.edit-document', compact('userInfo', 'certificates'));
     }
 
     public function updateDocument(Request $request, $id)
@@ -480,6 +476,6 @@ class LawyerController extends Controller
             }
         }
         UserInfo::whereId($userInfo->id)->update($input_data);
-        return redirect('/admin/lawyers')->with('success', 'Documents Updated Successfully!');
+        return redirect('/admin/daily-needs')->with('success', 'Documents Updated Successfully!');
     }
 }

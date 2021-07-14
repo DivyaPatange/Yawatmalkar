@@ -24,9 +24,9 @@ class CreateUserInfosTable extends Migration
             $table->string('contact_no')->nullable();
             $table->string('alt_contact_no')->nullable();
             $table->string('aadhar_no')->nullable();
-            $table->string('experience');
+            $table->string('experience')->nullable();
             $table->string('qualification')->nullable();
-            $table->string('specialization');
+            $table->string('specialization')->nullable();
             $table->text('office_address')->nullable();
             $table->text('residential_address')->nullable();
             $table->string('working_hour');

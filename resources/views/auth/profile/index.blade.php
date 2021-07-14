@@ -103,6 +103,7 @@
                                         <span class="contact-title">Aadhar No.:</span>
                                         <span class="contact-website">@if(!empty($userInfo)) {{ $userInfo->aadhar_no }} @endif</span>
                                     </div>
+                                    @can('manage-roles')
                                     <div class="skype-content">
                                         <span class="contact-title">Experience:</span>
                                         <span class="contact-skype">@if(!empty($userInfo)) {{ $userInfo->experience }} @endif</span>
@@ -111,6 +112,17 @@
                                         <span class="contact-title">Qualification:</span>
                                         <span class="contact-skype">@if(!empty($userInfo)) {{ $userInfo->qualification }} @endif</span>
                                     </div>
+                                    @endcan
+                                    @can('manage-provider')
+                                    <div class="skype-content">
+                                        <span class="contact-title">Years in Business:</span>
+                                        <span class="contact-skype">@if(!empty($userInfo)) {{ $userInfo->busi_year }} @endif</span>
+                                    </div>
+                                    <div class="skype-content">
+                                        <span class="contact-title">Products Served with Capacity:</span>
+                                        <span class="contact-skype">@if(!empty($userInfo)) {{ $userInfo->serve_capacity }} @endif</span>
+                                    </div>
+                                    @endcan
                                     <div class="skype-content">
                                         <span class="contact-title">Other Profession:</span>
                                         <span class="contact-skype">@if(!empty($userInfo)) {{ $userInfo->other_profession }} @endif</span>
@@ -138,10 +150,12 @@
                                         <span class="contact-title">About Yourself:</span>
                                         <span class="contact-skype">@if(!empty($userInfo)) {{ $userInfo->about_urself }} @endif</span>
                                     </div>
+                                    @can('manage-roles')
                                     <div class="skype-content">
                                         <span class="contact-title">Achievements:</span>
                                         <span class="contact-skype">@if(!empty($userInfo)) {{ $userInfo->achievements }} @endif</span>
                                     </div>
+                                    @endcan
                                     <div class="skype-content">
                                         <span class="contact-title">Youtube Link:</span>
                                         <span class="contact-skype">@if(!empty($userInfo)) {{ $userInfo->youtube_link }} @endif</span>

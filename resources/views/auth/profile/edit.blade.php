@@ -89,6 +89,7 @@
                                 <div class="col-md-12">
                                 <hr>
                                 </div>
+                                @can('manage-roles')
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Experience <span style="color:red;">*</span><span  style="color:red" id="experience_err"> </span></label>
@@ -107,6 +108,7 @@
                                         <input type="text" name="specialization" class="form-control" id="specialization" placeholder="Enter Specialization" value="{{ $userInfo->specialization }}">
                                     </div>
                                 </div>
+                                @endcan
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Working Hours <span style="color:red;">*</span><span  style="color:red" id="work_hour_err"> </span></label>
@@ -136,6 +138,23 @@
                                 <div class="col-md-12">
                                 <hr>
                                 </div>
+                                @can('manage-provider')
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Years in Business <span  style="color:red" id="busi_year_err"> </span></label>
+                                        <input name="busi_year" class="form-control" id="busi_year" value="{{ $userInfo->busi_year }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Products Served with Capacity <span  style="color:red" id="capacity_err"> </span></label>
+                                        <input name="serve_capacity" class="form-control" id="serve_capacity" value="{{ $userInfo->serve_capacity }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                <hr>
+                                </div>
+                                @endcan
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Other Profession <span  style="color:red" id="profession_err"> </span></label>
@@ -164,18 +183,39 @@
                         </form>
                     </div>
                 </div>
-                <div class="tab-pane  p-20" id="profile2" role="tabpanel">2</div>
+                <div class="tab-pane  p-20" id="profile2" role="tabpanel">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="table-responsive">
+                                <table style="width:100%">
+                                    <tr>
+                                        <th><label>Start Time</label></th>
+                                        <th><label>End Time</label></th>
+                                        <th class="text-right"><label>Action</label></th>
+                                    </tr>
+                                    @foreach($workingHour as $wH)
+                                    <tr>
+                                        <td><input type="time" name="start_time" class="form-control" value="{{ $wH->from }}"></td>
+                                        <td><input type="time" name="end_time" id="" class="form-control" value="{{ $wH->to }}"></td>
+                                        <td><button type="button" class="btn btn-primary" id="updateTime" data-id="{{ $wH->id }}">Update</button></td>
+                                    </tr>
+                                    @endforeach
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="tab-pane p-20" id="messages2" role="tabpanel">
                     <form method="POST" id="form-submit2" >
-                    @csrf 
-                    @method('PUT')
                         <div class="row">
+                            @can('manage-roles')
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Achievements <span  style="color:red" id="achievement_err"> </span></label>
                                     <textarea name="achievement" class="form-control" id="achievement">{{ $userInfo->achievements }}</textarea>
                                 </div>
                             </div>
+                            @endcan
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>About Yourselves <span  style="color:red" id="urself_err"> </span></label>
@@ -204,7 +244,7 @@
                                 </div>
                             </div>
                             <div class="col-md-12">
-                                <button type="button" id="submitForm2" class="btn btn-primary">Update</button>
+                                <button type="submit" id="submitForm2" class="btn btn-primary">Update</button>
                             </div>
                         </div>
                     </form>
@@ -268,24 +308,13 @@ $('body').on('submit', '#form-submit', function (event) {
     var other_profession = $("#other_profession").val();
     var dob = $("#dob").val();
     var expectation = $("#expectation").val();
-    
+    var busi_year = $("#busi_year").val();
+    var serve_capacity = $("#serve_capacity").val();
     // alert(formdata);
     if (name=="") {
         $("#name_err").fadeIn().html("Required");
         setTimeout(function(){ $("#name_err").fadeOut(); }, 3000);
         $("#name").focus();
-        return false;
-    }
-    if (experience=="") {
-        $("#experience_err").fadeIn().html("Required");
-        setTimeout(function(){ $("#experience_err").fadeOut(); }, 3000);
-        $("#experience").focus();
-        return false;
-    }
-    if (specialization=="") {
-        $("#specialization_err").fadeIn().html("Required");
-        setTimeout(function(){ $("#specialization_err").fadeOut(); }, 3000);
-        $("#specialization").focus();
         return false;
     }
     if (working_hour=="") {
@@ -298,7 +327,7 @@ $('body').on('submit', '#form-submit', function (event) {
         $.ajax({
             url   :"{{ route('user.profile.update', $user->id) }}",
             type  :"PUT",
-            data:{name:name, category_id:category_id, sub_category_id:sub_category_id, contact_no:contact_no, alt_contact_no:alt_contact_no, aadhar_no:aadhar_no, email:email, experience:experience, qualification:qualification, specialization:specialization, office_addr:office_addr, residential_addr:residential_addr, working_hour:working_hour, other_profession:other_profession, dob:dob, expectation:expectation},
+            data:{name:name, category_id:category_id, sub_category_id:sub_category_id, contact_no:contact_no, alt_contact_no:alt_contact_no, aadhar_no:aadhar_no, email:email, experience:experience, qualification:qualification, specialization:specialization, office_addr:office_addr, residential_addr:residential_addr, working_hour:working_hour, other_profession:other_profession, dob:dob, expectation:expectation, busi_year:busi_year, serve_capacity:serve_capacity},
             
             success:function(result){
             // alert(result);
@@ -307,6 +336,50 @@ $('body').on('submit', '#form-submit', function (event) {
             }
         });
     }
+})
+
+$('body').on('submit', '#form-submit2', function (event) {
+    event.preventDefault();
+    var link = $("#link").val();
+    var formdata = new FormData(this);
+    // alert(formdata);
+    if (link=="") {
+        $("#link_err").fadeIn().html("Required");
+        setTimeout(function(){ $("#link_err").fadeOut(); }, 3000);
+        $("#link").focus();
+        return false;
+    }
+    else{
+        $.ajax({
+            url   :"{{ route('user.profile.update-details', $user->id) }}",
+            type  :"POST",
+            data:formdata,
+            cache :false,
+            processData: false,
+            contentType: false,
+            success:function(result){
+            // alert(result);
+            toastr.success(result.success);
+            // $("#form-submit")[0].reset();
+            }
+        });
+    }
+})
+
+$(document).on('click', '#updateTime', function(){
+    var $row = $(this).closest("tr");
+    var ID = $row.find("#updateTime").data('id');
+    var start_time = $row.find("input[name='start_time']").val();
+    var end_time = $row.find("input[name='end_time']").val();
+    $.ajax({
+    url: "{{ route('user.profile.update-time', $user->id) }}",
+    method: "POST",
+    data: {ID:ID, start_time:start_time, end_time:end_time},
+    success: function(data){
+        toastr.success(data.success);
+    }
+  });
+    
 })
 </script>
 @endsection

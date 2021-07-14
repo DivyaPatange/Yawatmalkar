@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\PagesController;
 use App\Http\Controllers\Admin\BannerImageController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\FlashesController;
+use App\Http\Controllers\Admin\DailyNeedsController;
 
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\UserScheduleController;
@@ -109,6 +110,13 @@ Route::prefix('admin')->name('admin.')->group(function() {
     Route::get('/beautician/edit-document/{id}', [BeauticianController::class, 'editDocument'])->name('beautician.edit-document');
     Route::put('/beautician/update-document/{id}', [BeauticianController::class, 'updateDocument'])->name('beautician.update-document');
 
+    Route::resource('/daily-needs', DailyNeedsController::class);
+    Route::post('/daily-needs/upload-document', [DailyNeedsController::class, 'uploadDocument'])->name('daily-needs.upload-document');
+    Route::post('/daily-needs/general-info', [DailyNeedsController::class, 'saveGeneralInfo'])->name('daily-needs.general-info');
+    Route::get('/daily-needs/status/{id}', [DailyNeedsController::class, 'status']);
+    Route::get('/daily-needs/edit-document/{id}', [DailyNeedsController::class, 'editDocument'])->name('daily-needs.edit-document');
+    Route::put('/daily-needs/update-document/{id}', [DailyNeedsController::class, 'updateDocument'])->name('daily-needs.update-document');
+
     Route::resource('/doctor-schedule', DoctorScheduleController::class);
     Route::get('/doctor-schedule/status/{id}', [DoctorScheduleController::class, 'status']);
     Route::post('/get-doctor-schedule', [DoctorScheduleController::class, 'getDoctorSchedule'])->name('get.doctor-schedule');
@@ -144,6 +152,8 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::prefix('user')->name('user.')->group(function() {
     Route::resource('/profile', ProfileController::class);
+    Route::post('profile-details/{id}', [ProfileController::class, 'updateDetails'])->name('profile.update-details');
+    Route::post('update-time/{id}', [ProfileController::class, 'updateWorkingHour'])->name('profile.update-time');
     Route::get('get-subcategory-list', [ProfileController::class, 'getSubCategoryList']);
     Route::resource('/schedule', UserScheduleController::class);
     Route::get('/schedule/status/{id}', [UserScheduleController::class, 'status']);
