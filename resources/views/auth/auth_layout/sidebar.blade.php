@@ -16,6 +16,10 @@
                 <li><a href="app-email.html"><i class="ti-email"></i> Appoitment</a></li>
                 @endcan
                 <li><a href="{{ route('user.profile.index') }}"><i class="ti-user"></i> Profile</a></li>
+                @can('manage-provider')
+                <li><a href="{{ route('user.products.index') }}"><i class="ti-panel"></i> Products </a>
+                </li>
+                @endcan
                 <!-- <li><a href="app-widget-card.html"><i class="ti-layout-grid2-alt"></i> Widget</a></li>
                 <li class="label">Features</li>
                 <li><a class="sidebar-sub-toggle"><i class="ti-layout"></i> UI Elements <span

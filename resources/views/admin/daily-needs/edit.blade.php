@@ -212,7 +212,7 @@ $('#category_id').change(function(){
       success:function(res){        
       if(res){
         $("#sub_category_id").empty();
-        $("#sub_category_id").append('<option>Select Sub-Category</option>');
+        $("#sub_category_id").append('<option value="">Select Sub-Category</option>');
         $.each(res,function(key,value){
           $("#sub_category_id").append('<option value="'+key+'">'+value+'</option>');
         });

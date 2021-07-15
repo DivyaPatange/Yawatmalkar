@@ -185,9 +185,14 @@
                 </div>
                 <div class="tab-pane  p-20" id="profile2" role="tabpanel">
                     <div class="row">
+                        <div class="col-md-12">
+                        <button type="button" name="add" id="add" class="btn btn-primary btn-sm">Add More</button>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-7">
                             <div class="table-responsive">
-                                <table style="width:100%">
+                                <table style="width:100%" id="dynamic_field">
                                     <tr>
                                         <th><label>Start Time</label></th>
                                         <th><label>End Time</label></th>
@@ -197,7 +202,10 @@
                                     <tr>
                                         <td><input type="time" name="start_time" class="form-control" value="{{ $wH->from }}"></td>
                                         <td><input type="time" name="end_time" id="" class="form-control" value="{{ $wH->to }}"></td>
-                                        <td><button type="button" class="btn btn-primary" id="updateTime" data-id="{{ $wH->id }}">Update</button></td>
+                                        <td>
+                                            <button type="button" class="btn btn-primary btn-sm" id="updateTime" data-id="{{ $wH->id }}">Update</button>
+                                            <button type="button" class="btn btn-danger btn-sm" id="deleteTime" data-id="{{ $wH->id }}">Remove</button>
+                                        </td>
                                     </tr>
                                     @endforeach
                                 </table>
@@ -257,6 +265,7 @@
 @section('customjs')
 <script src="http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
 <script>
+var SITEURL = "{{ route('user.profile.edit', $user->id) }}";
 $.ajaxSetup({
     headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -264,6 +273,19 @@ $.ajaxSetup({
 });
 $(document).ready(function() {
     $('.js-example').select2();
+});
+$(document).ready(function(){
+    var i = 1;
+
+    $("#add").click(function(){
+    i++;
+    $('#dynamic_field').append('<tr id="row'+i+'"><td><input type="time" name="start_time" class="form-control" /></td><td><input type="time" name="end_time" class="form-control" /></td><td><button type="button" id="'+i+'" class="btn btn-primary btn-sm btn_add mr-2">Add</button><button type="button" name="remove" id="'+i+'" class="btn btn-danger btn-sm btn_remove">Remove</button></td></tr>');  
+    });
+
+    $(document).on('click', '.btn_remove', function(){  
+    var button_id = $(this).attr("id");   
+    $('#row'+button_id+'').remove();  
+    });
 });
 $('#category_id').change(function(){
   var categoryID = $(this).val();  
@@ -377,9 +399,42 @@ $(document).on('click', '#updateTime', function(){
     data: {ID:ID, start_time:start_time, end_time:end_time},
     success: function(data){
         toastr.success(data.success);
+        location.reload();
     }
   });
     
+})
+
+$(document).on('click', '#deleteTime', function(){
+    var $row = $(this).closest("tr");
+    var ID = $row.find("#deleteTime").data('id');
+    $.ajax({
+    url: "{{ url('user/delete-working-time') }}"+'/'+ID,
+    type: "DELETE",
+    success: function(data){
+        toastr.success(data.success);
+        location.reload();
+    }
+  });
+    
+})
+
+$(document).on('click', '.btn_add', function(){
+    var $row = $(this).closest("tr");;
+    var start_time = $row.find("input[name='start_time']").val();
+    var end_time = $row.find("input[name='end_time']").val();
+    // alert(start_time);
+    $.ajax({
+    type:"POST",
+    url:"{{ route('user.add-working-time') }}",
+    data:{start_time:start_time, end_time:end_time},
+    cache:false,        
+    success:function(returndata)
+    {
+        toastr.success(returndata.success);
+        location.reload();
+    }
+  });
 })
 </script>
 @endsection

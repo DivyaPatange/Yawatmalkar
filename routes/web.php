@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\DailyNeedsController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\UserScheduleController;
 use App\Http\Controllers\User\ChangePasswordController;
+use App\Http\Controllers\User\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -154,6 +155,8 @@ Route::prefix('user')->name('user.')->group(function() {
     Route::resource('/profile', ProfileController::class);
     Route::post('profile-details/{id}', [ProfileController::class, 'updateDetails'])->name('profile.update-details');
     Route::post('update-time/{id}', [ProfileController::class, 'updateWorkingHour'])->name('profile.update-time');
+    Route::post('add-working-time', [ProfileController::class, 'addWorkingTime'])->name('add-working-time');
+    Route::delete('delete-working-time/{id}', [ProfileController::class, 'deleteWorkingTime'])->name('delete-working-time');
     Route::get('get-subcategory-list', [ProfileController::class, 'getSubCategoryList']);
     Route::resource('/schedule', UserScheduleController::class);
     Route::get('/schedule/status/{id}', [UserScheduleController::class, 'status']);
@@ -161,4 +164,7 @@ Route::prefix('user')->name('user.')->group(function() {
     Route::post('/schedule/update', [UserScheduleController::class, 'updateSchedule']);
     Route::get('/schedule/get-list', [UserScheduleController::class, 'getList'])->name('schedule.getList');
     Route::resource('change-password', ChangePasswordController::class);
+
+    // Product Route
+    Route::resource('/products', ProductController::class);
 });

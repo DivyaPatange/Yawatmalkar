@@ -151,6 +151,16 @@ class ProfileController extends Controller
         return response()->json(['success' => 'Working Hour Updated Successfully!']);
     }
 
+    public function addWorkingTime(Request $request)
+    {
+        $workingHour = new UserWorkingHour();
+        $workingHour->user_id = Auth::user()->id;
+        $workingHour->from = $request->start_time;
+        $workingHour->to = $request->end_time;
+        $workingHour->save();
+        return response()->json(['success' => 'Working Hour Added Successfully!']);
+    }
+
     /**
      * Remove the specified resource from storage.
      *
@@ -160,5 +170,12 @@ class ProfileController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function deleteWorkingTime($id)
+    {
+        $workingHour = UserWorkingHour::where('id', $id)->first();
+        $workingHour->delete();
+        return response()->json(['success' => 'Working Hour Deleted Successfully!']);
     }
 }
