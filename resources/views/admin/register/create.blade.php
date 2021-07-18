@@ -1,5 +1,5 @@
 @extends('admin.admin_layout.main')
-@section('title', 'Daily Needs')
+@section('title', 'Registration Form')
 @section('customcss')
 <link href="http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
 <link href="//cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -17,25 +17,25 @@
 }
 </style>
 @endsection
-@section('page_title', 'Add Daily Needs')
+@section('page_title', 'Registration Form')
 @section('breadcrumb1', 'Home')
 @section('breadcrumb2')
-<a href="{{ route('admin.daily-needs.create') }}">Add Daily Needs</a>
+<a href="{{ route('admin.register.create') }}">Registration Form</a>
 @endsection
 @section('content')
 <div class="row" id="firstStep">
     <div class="col-sm-12">
         <div class="card">
             <div class="card-header">
-                <h5>Add Daily Needs</h5>
+                <h5>Registration Form</h5>
             </div>
             <div class="card-body">
                 <form method="POST" id="form-submit">
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label>Name of Service Provider <span style="color:red;">*</span><span  style="color:red" id="name_err"> </span></label>
-                                <input type="text" name="provider_name" class="form-control" id="provider_name" placeholder="Enter Service Provider Name">
+                                <label>Full Name <span style="color:red;">*</span><span  style="color:red" id="name_err"> </span></label>
+                                <input type="text" name="name" class="form-control" id="name" placeholder="Enter Full Name">
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -80,6 +80,51 @@
                                 <input type="email" name="email" class="form-control" id="email" placeholder="Enter Email Id">
                             </div>
                         </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Role Type <span  style="color:red" id="role_err"> </span></label>
+                                <select name="role" class="form-control" id="role">
+                                    <option value="">-Select Role-</option>
+                                    <option value="doctor">Doctor</option>
+                                    <option value="lawyer">Lawyer</option>
+                                    <option value="beautician">Beautician</option>
+                                    <option value="provider">Provider</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                        <hr>
+                        </div>
+                        <div class="col-md-4 doctorDiv">
+                            <div class="form-group">
+                                <label>Experience <span style="color:red;">*</span><span  style="color:red" id="experience_err"> </span></label>
+                                <input type="text" name="experience" class="form-control" id="experience" placeholder="Enter Experience">
+                            </div>
+                        </div>
+                        <div class="col-md-4 doctorDiv">
+                            <div class="form-group">
+                                <label>Qualification <span  style="color:red" id="qualification_err"> </span></label>
+                                <input type="text" name="qualification" class="form-control" id="qualification" placeholder="Enter Qualification">
+                            </div>
+                        </div>
+                        <div class="col-md-4 doctorDiv">
+                            <div class="form-group">
+                                <label>Specialization <span style="color:red;">*</span><span  style="color:red" id="specialization_err"> </span></label>
+                                <input type="text" name="specialization" class="form-control" id="specialization" placeholder="Enter Specialization">
+                            </div>
+                        </div>
+                        <div class="col-md-6 dailyNeed hidden">
+                            <div class="form-group">
+                                <label>Years in Business <span class="text-danger" id="busi_year_err"></span></label>
+                                <input type="text" name="busi_year" class="form-control" id="busi_year">
+                            </div>
+                        </div>
+                        <div class="col-md-6 dailyNeed hidden">
+                            <div class="form-group">
+                                <label>Products Served With Capacity</label>
+                                <input type="text" name="serve_capacity" class="form-control" id="serve_capacity">
+                            </div>
+                        </div>
                         <div class="col-md-12">
                         <hr>
                         </div>
@@ -93,21 +138,6 @@
                             <div class="form-group">
                                 <label>Residential Address <span  style="color:red" id="residential_err"> </span></label>
                                 <textarea name="residential_addr" class="form-control" id="residential_addr"></textarea>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                        <hr>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Years in Business <span class="text-danger" id="busi_year_err"></span></label>
-                                <input type="text" name="busi_year" class="form-control" id="busi_year">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Products Served With Capacity</label>
-                                <input type="text" name="serve_capacity" class="form-control" id="serve_capacity">
                             </div>
                         </div>
                         <div class="col-md-12">
@@ -139,7 +169,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label>Other Profession/Service/Business <span  style="color:red" id="profession_err"> </span></label>
+                                <label>Other Profession <span  style="color:red" id="profession_err"> </span></label>
                                 <input type="text" name="other_profession" class="form-control" id="other_profession" >
                             </div>
                         </div>
@@ -158,6 +188,12 @@
                         <div class="col-md-12">
                         <hr>
                         </div>
+                        <div class="col-md-6 doctorDiv">
+                            <div class="form-group">
+                                <label>Achievements <span  style="color:red" id="achievement_err"> </span></label>
+                                <textarea name="achievement" class="form-control" id="achievement"></textarea>
+                            </div>
+                        </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>About Yourselves <span  style="color:red" id="urself_err"> </span></label>
@@ -165,7 +201,7 @@
                             </div>
                         </div>
                         <div class="col-md-12">
-                        <hr>
+                            <hr>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
@@ -230,7 +266,7 @@
                             </div>
                         </div>
                         <div class="col-md-12">
-                            <input type="hidden" name="provider_id" id="provider_id" value="">
+                            <input type="hidden" name="user_id" id="user_id" value="">
                             <button type="submit" id="submitForm1" class="btn btn-primary">Save & Next</button>
                         </div>
                     </div>
@@ -295,7 +331,7 @@
                             </div>
                         </div>
                         <div class="col-md-12">
-                            <input type="hidden" name="provider_id" id="provider_id1" value="">
+                            <input type="hidden" name="user_id" id="user_id1" value="">
                             <button type="submit" id="submitForm2" class="btn btn-primary">Submit</button>
                         </div>
                     </div>
@@ -326,7 +362,7 @@ $('#category_id').change(function(){
       success:function(res){        
       if(res){
         $("#sub_category_id").empty();
-        $("#sub_category_id").append('<option>Select Sub-Category</option>');
+        $("#sub_category_id").append('<option value="">Select Sub-Category</option>');
         $.each(res,function(key,value){
           $("#sub_category_id").append('<option value="'+key+'">'+value+'</option>');
         });
@@ -369,21 +405,26 @@ $(document).ready(function(){
 </script>
 <script type=text/javascript>
 $('body').on('click', '#submitForm', function () {
-    var provider_name = $("#provider_name").val();
+    var name = $("#name").val();
     var category_id = $("#category_id").val();
     var sub_category_id = $("#sub_category_id").val();
     var contact_no = $("#contact_no").val();
     var alt_contact_no = $("#alt_contact_no").val();
     var aadhar_no = $("#aadhar_no").val();
     var email = $("#email").val();
+    var role = $("#role").val();
+    var experience = $("#experience").val();
+    var qualification = $("#qualification").val();
+    var specialization = $("#specialization").val();
+    var busi_year = $("#busi_year").val();
+    var serve_capacity = $("#serve_capacity").val();
     var office_addr = $("#office_addr").val();
     var residential_addr = $("#residential_addr").val();
-    var busi_year = $("#busi_year").val();
     var working_hour = $("#working_hour").val();
     var other_profession = $("#other_profession").val();
-    var serve_capacity = $("#serve_capacity").val();
     var dob = $("#dob").val();
     var expectation = $("#expectation").val();
+    var achievement = $("#achievement").val();
     var urself = $("#urself").val();
     var username = $("#username").val();
     var password = $("#password").val();
@@ -399,19 +440,55 @@ $('body').on('click', '#submitForm', function () {
     TableData.shift(); // first row will be empty - so remove
     var Data;
     Data = JSON.stringify(TableData);
-    if (provider_name=="") {
+    if (name=="") {
         $("#name_err").fadeIn().html("Required");
         setTimeout(function(){ $("#name_err").fadeOut(); }, 3000);
-        $("#provider_name").focus();
+        $("#name").focus();
         return false;
     }
-    if (busi_year=="") {
-        $("#busi_year_err").fadeIn().html("Required");
-        setTimeout(function(){ $("#busi_year_err").fadeOut(); }, 3000);
-        $("#busi_year").focus();
+    if (category_id=="") {
+        $("#cat_err").fadeIn().html("Required");
+        setTimeout(function(){ $("#cat_err").fadeOut(); }, 3000);
+        $("#category_id").focus();
         return false;
     }
-    if (from == "") {
+    if (sub_category_id=="") {
+        $("#sub_cat_err").fadeIn().html("Required");
+        setTimeout(function(){ $("#sub_cat_err").fadeOut(); }, 3000);
+        $("#sub_category_id").focus();
+        return false;
+    }
+    if (role=="") {
+        $("#role_err").fadeIn().html("Required");
+        setTimeout(function(){ $("#role_err").fadeOut(); }, 3000);
+        $("#role").focus();
+        return false;
+    }
+    if((category_id == 2) || (category_id == "Legal Services") || (category_id == "Beauty"))
+    {
+        if (experience=="") {
+            $("#experience_err").fadeIn().html("Required");
+            setTimeout(function(){ $("#experience_err").fadeOut(); }, 3000);
+            $("#experience").focus();
+            return false;
+        }
+        if (specialization=="") {
+            $("#specialization_err").fadeIn().html("Required");
+            setTimeout(function(){ $("#specialization_err").fadeOut(); }, 3000);
+            $("#specialization").focus();
+            return false;
+        }
+    }
+    if(category_id == 1)
+    {
+        if (busi_year=="") {
+            $("#busi_year_err").fadeIn().html("Required");
+            setTimeout(function(){ $("#busi_year_err").fadeOut(); }, 3000);
+            $("#busi_year").focus();
+            return false;
+        }
+    }
+    if(from == "") {
         $("#work_shift_err").fadeIn().html("Required");
         setTimeout(function(){ $("#work_shift_err").fadeOut(); }, 3000);
         $("input[name=from]").focus();
@@ -421,11 +498,6 @@ $('body').on('click', '#submitForm', function () {
         $("#work_shift_err").fadeIn().html("Required");
         setTimeout(function(){ $("#work_shift_err").fadeOut(); }, 3000);
         $("input[name=to]").focus();
-        return false;
-    }
-    if (Data == "") {
-        $("#work_shift_err").fadeIn().html("Required");
-        setTimeout(function(){ $("#work_shift_err").fadeOut(); }, 3000);
         return false;
     }
     if (working_hour=="") {
@@ -450,8 +522,8 @@ $('body').on('click', '#submitForm', function () {
     { 
         $.ajax({
             type:"POST",
-            url:"{{ route('admin.daily-needs.store') }}",
-            data:{provider_name:provider_name, category_id:category_id, sub_category_id:sub_category_id, contact_no:contact_no, alt_contact_no:alt_contact_no, aadhar_no:aadhar_no, email:email, busi_year:busi_year, serve_capacity:serve_capacity, office_addr:office_addr, residential_addr:residential_addr, working_hour:working_hour, other_profession:other_profession, dob:dob, expectation:expectation, urself:urself, username:username, password:password, Data:Data},
+            url:"{{ route('admin.register.store') }}",
+            data:{name:name, category_id:category_id, sub_category_id:sub_category_id, contact_no:contact_no, alt_contact_no:alt_contact_no, aadhar_no:aadhar_no, email:email, experience:experience, qualification:qualification, specialization:specialization, office_addr:office_addr, residential_addr:residential_addr, working_hour:working_hour, other_profession:other_profession, dob:dob, expectation:expectation, achievement:achievement, urself:urself, username:username, password:password, Data:Data, busi_year:busi_year, serve_capacity:serve_capacity, role:role},
             cache:false,        
             success:function(returndata)
             {
@@ -459,7 +531,7 @@ $('body').on('click', '#submitForm', function () {
                 if(returndata.success){
                     document.getElementById("form-submit").reset();
                     toastr.success(returndata.success);
-                    $("#provider_id").val(returndata.id);
+                    $("#user_id").val(returndata.id);
                     $("#firstStep").addClass('hidden');
                     $("#secondStep").removeClass('hidden');
                 }
@@ -508,19 +580,20 @@ $('body').on('submit', '#form-submit1', function (event) {
     }
     else{
         $.ajax({
-            url   :"{{ route('admin.daily-needs.upload-document') }}",
+            url   :"{{ route('admin.register.upload-document') }}",
             type  :"POST",
             data  :formdata,
             cache :false,
             processData: false,
             contentType: false,
             success:function(result){
-                toastr.success(result.success);
-                $("#form-submit1")[0].reset();
-                $("#provider_id1").val(result.id);
-                $("#firstStep").addClass('hidden');
-                $("#secondStep").addClass('hidden');
-                $("#thirdStep").removeClass('hidden');
+            // alert(result);
+            toastr.success(result.success);
+            $("#form-submit1")[0].reset();
+            $("#user_id1").val(result.id);
+            $("#firstStep").addClass('hidden');
+            $("#secondStep").addClass('hidden');
+            $("#thirdStep").removeClass('hidden');
             }
         });
     }
@@ -616,7 +689,7 @@ $('body').on('submit', '#form-submit2', function (event) {
     }
     else{
         $.ajax({
-            url   :"{{ route('admin.daily-needs.general-info') }}",
+            url   :"{{ route('admin.register.general-info') }}",
             type  :"POST",
             data  :formdata,
             cache :false,
@@ -632,6 +705,13 @@ $('body').on('submit', '#form-submit2', function (event) {
             }
         });
     }
+});
+$('#category_id').change(function(){
+  var categoryID = $(this).val();  
+  if(categoryID == 1){
+    $(".dailyNeed").removeClass("hidden");
+    $(".doctorDiv").addClass("hidden");
+  }
 });
 </script>
 @endsection

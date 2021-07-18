@@ -6,12 +6,30 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Admin\Category;
 use App\Models\Admin\SubCategory;
+use DB;
 
 class SubCategoryController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth:admin');
+    }
+
+    public function getSubCategoryList(Request $request)
+    {
+        $subCategory = SubCategory::where("category_id", $request->category_id)->where('status', 1)
+        ->pluck("sub_category","id");
+        return response()->json($subCategory);
+    }
+
+    public function getUserList(Request $request)
+    {
+        $users = DB::table('users')
+        ->join('user_infos', 'user_infos.user_id', '=', 'users.id')
+        ->where("sub_category_id", $request->sub_category_id)->where('status', 1)->where('is_register', 'Yes')
+        ->select('users.id', 'users.status', 'users.is_register', 'user_infos.sub_category_id', 'users.name')
+        ->pluck("name","id");
+        return response()->json($users);
     }
 
     /**

@@ -1,5 +1,5 @@
 @extends('admin.admin_layout.main')
-@section('title', 'Lawyers')
+@section('title', 'User Document')
 @section('customcss')
 <link href="http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
 <link href="//cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -17,10 +17,10 @@
 }
 </style>
 @endsection
-@section('page_title', 'Edit Lawyer Document')
+@section('page_title', 'Edit User Document')
 @section('breadcrumb1', 'Home')
 @section('breadcrumb2')
-<a href="{{ route('admin.lawyers.edit-document', $userInfo->user_id) }}">Edit Lawyer Document</a>
+<a href="{{ route('admin.register.edit-document', $userInfo->user_id) }}">Edit User Document</a>
 @endsection
 @section('content')
 <div class="row">
@@ -30,7 +30,7 @@
                 <h5>Upload Documents</h5>
             </div>
             <div class="card-body">
-                <form method="POST" id="form-submit1" enctype="multipart/form-data" action="{{ route('admin.lawyers.update-document', $userInfo->user_id) }}">
+                <form method="POST" id="form-submit1" enctype="multipart/form-data" action="{{ route('admin.register.update-document', $userInfo->user_id) }}">
                 @csrf
                 @method('PUT')
                     <div class="row">

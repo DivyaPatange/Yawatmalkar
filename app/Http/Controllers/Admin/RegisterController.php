@@ -14,12 +14,12 @@ use App\Models\Admin\UserCertificate;
 use DB;
 use App\Models\Role;
 
-class DailyNeedsController extends Controller
+class RegisterController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth:admin');
-    } 
+    }
 
     /**
      * Display a listing of the resource.
@@ -30,23 +30,38 @@ class DailyNeedsController extends Controller
     {
         if(request()->ajax()) 
         {
-            $data = DB::table('users')->where('is_register', 'Yes')->where('acc_type', 'provider')
+            $data = DB::table('users')->where('is_register', 'Yes')
             ->join('user_infos', 'user_infos.user_id', '=', 'users.id')
-            ->select('users.*', 'user_infos.photo', 'user_infos.contact_no', 'user_infos.busi_year', 'user_infos.serve_capacity')
+            ->select('users.*', 'user_infos.photo', 'user_infos.contact_no', 'user_infos.category_id', 'user_infos.sub_category_id')
             ->orderBy('id', 'DESC')->get();
             return datatables()->of($data)
             ->addColumn('photo', function($row){
                 $imageUrl = asset('UserPhoto/' . $row->photo);
                 return '<img src="'.$imageUrl.'" width="50px">';
             })
-            ->addColumn('status', 'admin.daily-needs.status')
-            ->addColumn('action', 'admin.daily-needs.action')
-            ->rawColumns(['action','status', 'photo'])
+            ->addColumn('category_id', function($row){
+                $category = Category::where('id', $row->category_id)->first();
+                if(!empty($category))
+                {
+                    return $category->category_name;
+                }
+            })
+            ->addColumn('sub_category_id', function($row){
+                $subCategory = SubCategory::where('id', $row->sub_category_id)->first();
+                if(!empty($subCategory))
+                {
+                    return $subCategory->sub_category;
+                }
+            })
+            ->addColumn('status', 'admin.register.status')
+            ->addColumn('action', 'admin.register.action')
+            ->rawColumns(['action','status', 'photo', 'category_id', 'sub_category_id'])
             ->addIndexColumn()
             ->make(true);
         }
-        return view('admin.daily-needs.index');
+        return view('admin.register.index');
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -56,7 +71,7 @@ class DailyNeedsController extends Controller
     public function create()
     {
         $category = Category::where('status', 1)->get();
-        return view('admin.daily-needs.create', compact('category'));
+        return view('admin.register.create', compact('category'));
     }
 
     /**
@@ -71,14 +86,14 @@ class DailyNeedsController extends Controller
         if(empty($duplicate)){
             $id = mt_rand(100000, 999999);
             $user = new User();
-            $user->name = $request->provider_name;
+            $user->name = $request->name;
             $user->employee_id = "YWM".$id;
             $user->username = $request->username;
             $user->email = $request->email;
             $user->password = Hash::make($request->password);
             $user->password_1 = $request->password;
             $user->is_register = 'No';
-            $user->acc_type = "provider";
+            $user->acc_type = $request->role;
             $user->save();
 
 
@@ -89,12 +104,16 @@ class DailyNeedsController extends Controller
             $userInfo->contact_no = $request->contact_no;
             $userInfo->alt_contact_no = $request->alt_contact_no;
             $userInfo->aadhar_no = $request->aadhar_no;
+            $userInfo->experience = $request->experience;
+            $userInfo->qualification = $request->qualification;
+            $userInfo->specialization = $request->specialization;
             $userInfo->office_address = $request->office_addr;
             $userInfo->residential_address = $request->residential_addr;
             $userInfo->working_hour = $request->working_hour;
             $userInfo->other_profession = $request->other_profession;
             $userInfo->dob = $request->dob;
             $userInfo->expectation = $request->expectation;
+            $userInfo->achievements = $request->achievement;
             $userInfo->about_urself = $request->urself;
             $userInfo->busi_year = $request->busi_year;
             $userInfo->serve_capacity = $request->serve_capacity;
@@ -112,7 +131,7 @@ class DailyNeedsController extends Controller
                     $workingHour->save();
                 }
             }
-            $userRole = Role::where('acc_type', 'provider')->first();
+            $userRole = Role::where('acc_type', $request->role)->first();
             $user->roles()->attach($userRole);
             return response()->json(['success' => 'Record Saved Successfully!', 'id' => $user->id]);
         }
@@ -121,108 +140,9 @@ class DailyNeedsController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $user = User::findorfail($id);
-        return view('admin.daily-needs.show', compact('user'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $category = Category::where('status', 1)->get();
-        $user = User::findorfail($id);
-        $userInfo = UserInfo::where('user_id', $id)->first();
-        $subCategory = SubCategory::where('category_id', $userInfo->category_id)->get();
-        return view('admin.daily-needs.edit', compact('user', 'category', 'userInfo', 'subCategory'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        $input_data = array (
-            'name' => $request->provider_name,
-            'email' => $request->email,
-        );
-        User::whereId($id)->update($input_data);
-
-        $input_data1 = array (
-            'category_id' => $request->category_id,
-            'sub_category_id' => $request->sub_category_id,
-            'contact_no' => $request->contact_no,
-            'alt_contact_no' => $request->alt_contact_no,
-            'aadhar_no' => $request->aadhar_no,
-            'busi_year' => $request->busi_year,
-            'serve_capacity' => $request->serve_capacity,
-            'working_hour' => $request->working_hour,
-            'office_address' => $request->office_addr,
-            'residential_address' => $request->residential_addr,
-            'other_profession' => $request->other_profession,
-            'dob' => $request->dob,
-            'expectation' => $request->expectation,
-            'about_urself' => $request->urself,
-            'license' => $request->license,
-            'joining_date' => $request->joining_date,
-            'youtube_link' => $request->link,
-        );
-        $userInfo = UserInfo::where('user_id', $id)->first();
-        UserInfo::whereId($userInfo->id)->update($input_data1);
-        return redirect('/admin/daily-needs')->with('success', 'Record Updated Successfylly!');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        $user = User::findorfail($id);
-        $userInfo = UserInfo::where('user_id', $id)->first();
-        $userCerti = UserCertificate::where('user_id', $id)->get();
-        $user->roles()->detach();
-        $user->delete();
-        if($userInfo->photo){
-            unlink(public_path('UserPhoto/'.$userInfo->photo));
-        }
-        if($userInfo->signature){
-            unlink(public_path('UserSignature/'.$userInfo->signature));
-        }
-        $userInfo->delete();
-        if(count($userCerti) > 0){
-            foreach($userCerti as $d)
-            {
-                $deleteCerti = UserCertificate::where('id', $d->id)->first();
-                if($deleteCerti->pdf_file){
-                    unlink(public_path('UserCertificate/'.$deleteCerti->pdf_file));
-                }
-                $deleteCerti->delete();
-            }
-        }
-        return response()->json(['success' => 'Record Deleted Successfully!']);
-    }
-
     public function uploadDocument(Request $request)
     {
-        $user  = UserInfo::where('user_id', $request->provider_id)->first();
+        $user  = UserInfo::where('user_id', $request->user_id)->first();
         if(!empty($user)){
             $image = $request->file('photo');
             // dd($request->file('photo'));
@@ -244,7 +164,7 @@ class DailyNeedsController extends Controller
             else{
                 $image_name1 = "";
             }
-            $result = UserInfo::where('user_id', $request->provider_id)->update(['photo' => $image_name, 'signature' => $image_name1]);
+            $result = UserInfo::where('user_id', $request->user_id)->update(['photo' => $image_name, 'signature' => $image_name1]);
         }
         if($request->hasfile('pdf_file'))
         {
@@ -268,20 +188,20 @@ class DailyNeedsController extends Controller
             {
                 if(($certificate_name[$i] != "") && ($files[$i] != "")){
                     $userCerti = new UserCertificate();
-                    $userCerti->user_id = $request->provider_id;
+                    $userCerti->user_id = $request->user_id;
                     $userCerti->certificate_name = $certificate_name[$i];
                     $userCerti->certificate_pdf = $files[$i];
                     $userCerti->save();
                 }
             }
         }
-        return response()->json(['success' => 'Record Saved Successfully!', 'id' => $request->provider_id]);
+        return response()->json(['success' => 'Record Saved Successfully!', 'id' => $request->user_id]);
         // return $files;
     }
 
     public function saveGeneralInfo(Request $request)
     {
-        $userInfo = UserInfo::where('user_id', $request->provider_id)->first();
+        $userInfo = UserInfo::where('user_id', $request->user_id)->first();
         $image = $request->file('passbook');
         if($image != '')
         {
@@ -335,8 +255,78 @@ class DailyNeedsController extends Controller
             'youtube_link' => $request->link,
         );
         UserInfo::whereId($userInfo->id)->update($input_data);
-        User::where('id', $request->provider_id)->update(['is_register' => 'Yes']);
+        User::where('id', $request->user_id)->update(['is_register' => 'Yes']);
         return response()->json(['success' => 'Registration is Successfully Done.']);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        $user = User::findorfail($id);
+        return view('admin.register.show', compact('user'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        $category = Category::where('status', 1)->get();
+        $user = User::findorfail($id);
+        $userInfo = UserInfo::where('user_id', $id)->first();
+        $subCategory = SubCategory::where('category_id', $userInfo->category_id)->get();
+        return view('admin.register.edit', compact('user', 'category', 'userInfo', 'subCategory'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        $input_data = array (
+            'name' => $request->name,
+            'email' => $request->email,
+        );
+        User::whereId($id)->update($input_data);
+
+        $input_data1 = array (
+            'category_id' => $request->category_id,
+            'sub_category_id' => $request->sub_category_id,
+            'contact_no' => $request->contact_no,
+            'alt_contact_no' => $request->alt_contact_no,
+            'aadhar_no' => $request->aadhar_no,
+            'experience' => $request->experience,
+            'qualification' => $request->qualification,
+            'specialization' => $request->specialization,
+            'busi_year' => $request->busi_year,
+            'serve_capacity' => $request->serve_capacity,
+            'working_hour' => $request->working_hour,
+            'office_address' => $request->office_addr,
+            'residential_address' => $request->residential_addr,
+            'other_profession' => $request->other_profession,
+            'dob' => $request->dob,
+            'expectation' => $request->expectation,
+            'achievements' => $request->achievement,
+            'about_urself' => $request->urself,
+            'license' => $request->license,
+            'joining_date' => $request->joining_date,
+            'youtube_link' => $request->link,
+        );
+        $userInfo = UserInfo::where('user_id', $id)->first();
+        UserInfo::whereId($userInfo->id)->update($input_data1);
+        return redirect('/admin/register')->with('success', 'Record Updated Successfully!');
     }
 
     public function status(Request $request, $id)
@@ -350,14 +340,14 @@ class DailyNeedsController extends Controller
             $user->status = 1;
         }
         $user->update($request->all());
-        return response()->json(['success' => 'Service Provider Status Changed Successfully!']);
+        return response()->json(['success' => 'Status Changed Successfully!']);
     }
 
     public function editDocument($id)
     {
         $userInfo = UserInfo::where('user_id', $id)->first();
         $certificates = UserCertificate::where('user_id', $id)->get();
-        return view('admin.daily-needs.edit-document', compact('userInfo', 'certificates'));
+        return view('admin.register.edit-document', compact('userInfo', 'certificates'));
     }
 
     public function updateDocument(Request $request, $id)
@@ -476,6 +466,47 @@ class DailyNeedsController extends Controller
             }
         }
         UserInfo::whereId($userInfo->id)->update($input_data);
-        return redirect('/admin/daily-needs')->with('success', 'Documents Updated Successfully!');
+        return redirect('/admin/register')->with('success', 'Documents Updated Successfully!');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        $user = User::findorfail($id);
+        $userInfo = UserInfo::where('user_id', $id)->first();
+        $userCerti = UserCertificate::where('user_id', $id)->get();
+        $workingHour = UserWorkingHour::where('user_id', $id)->get();
+        $user->roles()->detach();
+        $user->delete();
+        if($userInfo->photo){
+            unlink(public_path('UserPhoto/'.$userInfo->photo));
+        }
+        if($userInfo->signature){
+            unlink(public_path('UserSignature/'.$userInfo->signature));
+        }
+        $userInfo->delete();
+        if(count($userCerti) > 0){
+            foreach($userCerti as $d)
+            {
+                $deleteCerti = UserCertificate::where('id', $d->id)->first();
+                if($deleteCerti->pdf_file){
+                    unlink(public_path('UserCertificate/'.$deleteCerti->pdf_file));
+                }
+                $deleteCerti->delete();
+            }
+        }
+        if(count($workingHour) > 0){
+            foreach($workingHour as $wH)
+            {
+                $deleteWorkingHour = UserWorkingHour::where('id', $wH->id)->first();
+                $deleteWorkingHour->delete();
+            }
+        }
+        return response()->json(['success' => 'Record Deleted Successfully!']);
     }
 }

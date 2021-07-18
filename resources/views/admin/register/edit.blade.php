@@ -1,5 +1,5 @@
 @extends('admin.admin_layout.main')
-@section('title', 'Lawyers')
+@section('title', 'Edit Profile')
 @section('customcss')
 <link href="http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
 <link href="//cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -17,27 +17,27 @@
 }
 </style>
 @endsection
-@section('page_title', 'Edit Lawyer')
+@section('page_title', 'Edit Profile')
 @section('breadcrumb1', 'Home')
 @section('breadcrumb2')
-<a href="{{ route('admin.lawyers.edit', $user->id) }}">Edit Lawyer</a>
+<a href="{{ route('admin.doctors.edit', $user->id) }}">Edit Doctor</a>
 @endsection
 @section('content')
 <div class="row" id="firstStep">
     <div class="col-sm-12">
         <div class="card">
             <div class="card-header">
-                <h5>Edit Lawyer</h5>
+                <h5>Edit Doctor</h5>
             </div>
             <div class="card-body">
-                <form method="POST" id="form-submit" action="{{ route('admin.lawyers.update', $user->id) }}">
+                <form method="POST" id="form-submit" action="{{ route('admin.register.update', $user->id) }}">
                 @csrf 
                 @method('PUT')
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label>Name of Lawyer <span style="color:red;">*</span><span  style="color:red" id="lawyer_err"> </span></label>
-                                <input type="text" name="lawyer_name" class="form-control" id="lawyer_name" placeholder="Enter Lawyer Name" value="{{ $user->name }}">
+                                <label>Full Name <span style="color:red;">*</span><span  style="color:red" id="name_err"> </span></label>
+                                <input type="text" name="name" class="form-control" id="name" placeholder="Enter Full Name" value="{{ $user->name }}">
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -89,6 +89,20 @@
                         <div class="col-md-12">
                         <hr>
                         </div>
+                        @if($user->acc_type == "provider")
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Years in Business <span class="text-danger" id="busi_year_err"></span></label>
+                                <input type="text" name="busi_year" class="form-control" id="busi_year" value="{{ $userInfo->busi_year }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Products Served With Capacity</label>
+                                <input type="text" name="serve_capacity" class="form-control" id="serve_capacity" value="{{ $userInfo->serve_capacity }}">
+                            </div>
+                        </div>
+                        @else
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Experience <span style="color:red;">*</span><span  style="color:red" id="experience_err"> </span></label>
@@ -107,6 +121,7 @@
                                 <input type="text" name="specialization" class="form-control" id="specialization" placeholder="Enter Specialization" value="{{ $userInfo->specialization }}">
                             </div>
                         </div>
+                        @endif
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Working Hours <span style="color:red;">*</span><span  style="color:red" id="work_hour_err"> </span></label>
@@ -238,30 +253,30 @@ $('#category_id').change(function(){
 </script>
 <script type=text/javascript>
 $('body').on('click', '#submitForm', function () {
-    var lawyer_name = $("#lawyer_name").val();
+    var name = $("#name").val();
     var experience = $("#experience").val();
     var specialization = $("#specialization").val();
     var working_hour = $("#working_hour").val();
     var link = $("#link").val();
     
-    if (lawyer_name=="") {
-        $("#lawyer_err").fadeIn().html("Required");
-        setTimeout(function(){ $("#lawyer_err").fadeOut(); }, 3000);
-        $("#lawyer_name").focus();
+    if (name=="") {
+        $("#name_err").fadeIn().html("Required");
+        setTimeout(function(){ $("#name_err").fadeOut(); }, 3000);
+        $("#name").focus();
         return false;
     }
-    if (experience=="") {
-        $("#experience_err").fadeIn().html("Required");
-        setTimeout(function(){ $("#experience_err").fadeOut(); }, 3000);
-        $("#experience").focus();
-        return false;
-    }
-    if (specialization=="") {
-        $("#specialization_err").fadeIn().html("Required");
-        setTimeout(function(){ $("#specialization_err").fadeOut(); }, 3000);
-        $("#specialization").focus();
-        return false;
-    }
+    // if (experience=="") {
+    //     $("#experience_err").fadeIn().html("Required");
+    //     setTimeout(function(){ $("#experience_err").fadeOut(); }, 3000);
+    //     $("#experience").focus();
+    //     return false;
+    // }
+    // if (specialization=="") {
+    //     $("#specialization_err").fadeIn().html("Required");
+    //     setTimeout(function(){ $("#specialization_err").fadeOut(); }, 3000);
+    //     $("#specialization").focus();
+    //     return false;
+    // }
     if (working_hour=="") {
         $("#work_hour_err").fadeIn().html("Required");
         setTimeout(function(){ $("#work_hour_err").fadeOut(); }, 3000);

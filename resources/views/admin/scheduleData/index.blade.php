@@ -134,7 +134,7 @@ input[type="checkbox"].switch_1{
                                 <th>Schedule Day</th>
                                 <th>Start Time</th>
                                 <th>End Time</th>
-                                <th>Consulting Time</th>
+                                <th>Consulting Time/Max. Appointment</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -143,12 +143,12 @@ input[type="checkbox"].switch_1{
                         <tfoot>
                             <tr>
                                 <th></th>
-                                <th>Doctor Name</th>
+                                <th>Full Name</th>
                                 <th>Schedule Date</th>
                                 <th>Schedule Day</th>
                                 <th>Start Time</th>
                                 <th>End Time</th>
-                                <th>Consulting Time</th>
+                                <th>Consulting Time/Max. Appointment</th>
                             </tr>
                         </tfoot>
                     </table>

@@ -1,5 +1,5 @@
 @extends('admin.admin_layout.main')
-@section('title', 'Daily Needs')
+@section('title', 'Registration List')
 @section('customcss')
 <link href="//cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" rel="stylesheet">
 
@@ -94,10 +94,10 @@ input[type="checkbox"].switch_1{
 }
 </style>
 @endsection
-@section('page_title', 'Daily Needs User List')
+@section('page_title', 'Registration List')
 @section('breadcrumb1', 'Home')
 @section('breadcrumb2')
-<a href="{{ route('admin.daily-needs.index') }}">Daily Needs User List</a>
+<a href="{{ route('admin.register.index') }}">Registration List</a>
 @endsection
 @section('content')
 <div class="row">
@@ -120,8 +120,8 @@ input[type="checkbox"].switch_1{
     <div class="col-sm-12">
         <div class="card">
             <div class="card-header">
-                <h5>Daily Needs User List</h5>
-                <a href="{{ route('admin.daily-needs.create') }}"><button type="button" class="btn btn-outline-primary float-right" title="" style="padding:10px 20px">Add New</button></a>
+                <h5>Doctors List</h5>
+                <a href="{{ route('admin.register.create') }}"><button type="button" class="btn btn-outline-primary float-right" title="" style="padding:10px 20px">Add New</button></a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -130,12 +130,12 @@ input[type="checkbox"].switch_1{
                             <tr>
                                 <th></th>
                                 <th>Photo</th>
-                                <th>Service Provider Name</th>
-                                <th>Provider ID</th>
+                                <th>Name</th>
+                                <th>Role Type</th>
                                 <th>Username</th>
                                 <th>Password</th>
-                                <th>Contact No.</th>
-                                <th>Years in Business</th>
+                                <th>Category</th>
+                                <th>Sub-Category</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -145,12 +145,12 @@ input[type="checkbox"].switch_1{
                             <tr>
                                 <th></th>
                                 <th>Photo</th>
-                                <th>Service Provider Name</th>
-                                <th>Provider ID</th>
+                                <th>Name</th>
+                                <th>Role Type</th>
                                 <th>Username</th>
                                 <th>Password</th>
-                                <th>Contact No.</th>
-                                <th>Years in Business</th>
+                                <th>Category</th>
+                                <th>Sub-Category</th>
                             </tr>
                         </tfoot>
                     </table>
@@ -192,7 +192,7 @@ $.ajaxSetup({
 });
 </script>
 <script type=text/javascript>
-var SITEURL = '{{ route('admin.daily-needs.index')}}';
+var SITEURL = '{{ route('admin.register.index')}}';
 function format ( d ) {
     // `d` is the original data object for the row
     return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px; width:100%">'+
@@ -223,11 +223,11 @@ $(document).ready(function(){
                 },
                 { data: 'photo', name: 'photo' },
                 { data: 'name', name: 'name' },
-                { data: 'employee_id', name: 'employee_id'},
+                { data: 'acc_type', name: 'acc_type'},
                 { data: 'username', name: 'username'},
                 { data: 'password_1', name: 'password_1'},
-                { data: 'contact_no', name: 'contact_no'},
-                { data: 'busi_year', name: 'busi_year'},
+                { data: 'category_id', name: 'category_id'},
+                { data: 'sub_category_id', name: 'sub_category_id'},
                ],
         order: [[0, 'desc']]
       });
@@ -254,7 +254,7 @@ $('body').on('click', '#delete', function () {
     if(confirm("Are You sure want to delete !")){
         $.ajax({
             type: "delete",
-            url: "{{ url('admin/daily-needs') }}"+'/'+id,
+            url: "{{ url('admin/register') }}"+'/'+id,
             success: function (data) {
             var oTable = $('#zero_config').dataTable(); 
             oTable.fnDraw(false);
@@ -273,7 +273,7 @@ $('body').on('click', '.switch_1', function () {
     if(id != ''){
         $.ajax({
             type: "get",
-            url: "{{ url('admin/daily-needs/status') }}"+'/'+id,
+            url: "{{ url('admin/register/status') }}"+'/'+id,
             success: function (data) {
                 // alert(data.teacher);
             var oTable = $('#zero_config').dataTable(); 

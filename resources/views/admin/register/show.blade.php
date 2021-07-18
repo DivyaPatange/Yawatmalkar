@@ -1,5 +1,5 @@
 @extends('admin.admin_layout.main')
-@section('title', 'Daily Needs')
+@section('title', 'User Profile')
 @section('customcss')
 <link href="//cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" rel="stylesheet">
 
@@ -88,15 +88,15 @@ input[type="checkbox"].switch_1{
   }
 </style>
 @endsection
-@section('page_title', 'Daily Needs User Profile')
+@section('page_title', 'User Profile')
 @section('breadcrumb1', 'Home')
 @section('breadcrumb2')
-<a href="{{ route('admin.daily-needs.show', $user->id) }}">Daily Needs User Profile</a>
+<a href="{{ route('admin.register.show', $user->id) }}">User Profile</a>
 @endsection
 @section('content')
 <div class="row">
     <div class="col-sm-12">
-        <h5 class="mt-4">Daily Needs User Profile</h5>
+        <h5 class="mt-4">User Profile</h5>
         <hr>
     </div>
     <?php 
@@ -109,15 +109,19 @@ input[type="checkbox"].switch_1{
                 <h6 class="mt-3">{{ $user->employee_id }}</h6>
             </div>
             <div class="card-body">
-                <?php 
-                    if(!empty($userInfo)){
-                    $category = DB::table('categories')->where('id', $userInfo->category_id)->first();
-                    $subCategory = DB::table('sub_categories')->where('id', $userInfo->sub_category_id)->first();
-                    }
-                ?>
+            <?php 
+                if(!empty($userInfo)){
+                $category = DB::table('categories')->where('id', $userInfo->category_id)->first();
+                $subCategory = DB::table('sub_categories')->where('id', $userInfo->sub_category_id)->first();
+                }
+            ?>
                 <p><b>Category :</b>@if(!empty($userInfo)) @if(!empty($category)) {{ $category->category_name }} @endif @endif</p>
                 <p><b>Sub-Category :</b>@if(!empty($userInfo)) @if(!empty($subCategory)) {{ $subCategory->sub_category }} @endif @endif</p>
-                <p><b>Years in Business :</b>@if(!empty($userInfo)) {{ $userInfo->busi_year }} @endif</p>
+                @if($user->acc_type != "provider")
+                <p><b>Experience :</b>@if(!empty($userInfo)) {{ $userInfo->experience }} @endif</p>
+                <p><b>Qualification :</b>@if(!empty($userInfo)) {{ $userInfo->qualification }} @endif</p>
+                @endif
+                <p><b>Role Type :</b>{{ $user->acc_type }}</p>
             </div>
         </div>
     </div>
@@ -137,7 +141,7 @@ input[type="checkbox"].switch_1{
             <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
                 <div class="row">
                     <div class="col-md-2">
-                        <p><b>Service Provider Name</b></p>
+                        <p><b>Full Name</b></p>
                     </div>
                     <div class="col-md-4">
                         <p>: {{ $user->name }}</p>
@@ -178,18 +182,39 @@ input[type="checkbox"].switch_1{
                     <div class="col-md-4">
                         <p>:@if(!empty($userInfo)) {{ $userInfo->aadhar_no }} @endif</p>
                     </div>
+                    @if($user->acc_type != "provider")
                     <div class="col-md-2">
-                        <p><b>Years in Business</b></p>
+                        <p><b>Experience</b></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p>:@if(!empty($userInfo)) {{ $userInfo->experience }} @endif</p>
+                    </div>
+                    <div class="col-md-2">
+                        <p><b>Qualification</b></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p>:@if(!empty($userInfo)) {{ $userInfo->qualification }} @endif</p>
+                    </div>
+                    <div class="col-md-2">
+                        <p><b>Specialization</b></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p>:@if(!empty($userInfo)) {{ $userInfo->specialization }} @endif</p>
+                    </div>
+                    @else
+                    <div class="col-md-2">
+                        <p><b>Years In Business</b></p>
                     </div>
                     <div class="col-md-4">
                         <p>:@if(!empty($userInfo)) {{ $userInfo->busi_year }} @endif</p>
                     </div>
-                    <div class="col-md-2">
-                        <p><b>Product Served Capacity</b></p>
+                    <div class="col-md-3">
+                        <p><b>Products served with capacity</b></p>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-9">
                         <p>:@if(!empty($userInfo)) {{ $userInfo->serve_capacity }} @endif</p>
                     </div>
+                    @endif
                     <div class="col-md-2">
                         <p><b>Other Profession</b></p>
                     </div>
@@ -219,6 +244,12 @@ input[type="checkbox"].switch_1{
                     </div>
                     <div class="col-md-9">
                         <p>:@if(!empty($userInfo)) {{ $userInfo->expectation }} @endif</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p><b>Achievement</b></p>
+                    </div>
+                    <div class="col-md-9">
+                        <p>:@if(!empty($userInfo)) {{ $userInfo->achievements }} @endif</p>
                     </div>
                     <div class="col-md-3">
                         <p><b>About Yourself</b></p>
@@ -305,28 +336,28 @@ input[type="checkbox"].switch_1{
             </div>
             <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
                 <div class="row">
-                    <div class="col-md-2">
+                    <div class="col-md-4">
                         <p><b>You Tube Link</b></p>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-8">
                         <p>: @if(!empty($userInfo)){{ $userInfo->youtube_link }}@endif</p>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-4">
                         <p><b>Working Hour</b></p>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-8">
                         <p>: @if(!empty($userInfo)){{ $userInfo->working_hour }}@endif</p>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-4">
                         <p><b>License</b></p>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-8">
                         <p>: @if(!empty($userInfo)){{ $userInfo->license }}@endif</p>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-4">
                         <p><b>Working Shifts</b></p>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-8">
                         <?php 
                             $workingHour = DB::table('user_working_hours')->where('user_id', $user->id)->get();
                         ?>
@@ -351,5 +382,7 @@ $.ajaxSetup({
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
 });
+</script>
+<script type=text/javascript>
 </script>
 @endsection`

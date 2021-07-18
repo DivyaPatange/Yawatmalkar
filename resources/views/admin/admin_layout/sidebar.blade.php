@@ -43,11 +43,8 @@
                 <li class="nav-item pcoded-menu-caption">
                     <label>Registration Form</label>
                 </li>
-                <li data-username="Charts Morris" class="nav-item"><a href="{{ route('admin.doctors.index') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span><span class="pcoded-mtext">Doctors Registration</span></a></li>
-                <li data-username="Maps Google" class="nav-item"><a href="{{ route('admin.lawyers.index') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-map"></i></span><span class="pcoded-mtext">Lawyer Registration</span></a></li>
-                <li data-username="Charts Morris" class="nav-item"><a href="{{ route('admin.beautician.index') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span><span class="pcoded-mtext">Beautician Registration</span></a></li>
-                <li data-username="Charts Morris" class="nav-item"><a href="{{ route('admin.daily-needs.index') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-map"></i></span><span class="pcoded-mtext">Daily Needs Registration</span></a></li>
-
+                <li data-username="Charts Morris" class="nav-item"><a href="{{ route('admin.register.index') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span><span class="pcoded-mtext">Register</span></a></li>
+            
                 <li class="nav-item pcoded-menu-caption">
                     <label>Schedule Data</label>
                 </li>
@@ -57,6 +54,7 @@
                         <li class=""><a href="{{ route('admin.doctor-schedule.index') }}" class="">Doctor Schedule</a></li>
                         <li class=""><a href="{{ route('admin.lawyer-schedule.index') }}" class="">Lawyer Schedule</a></li>
                         <li class=""><a href="{{ route('admin.beautician-schedule.index') }}" class="">Beautician Schedule</a></li>
+                        <li class=""><a href="{{ route('admin.schedule-data.index') }}" class="">Schedule Data</a></li>
                     </ul>
                 </li>
                 <li data-username="Sample Page" class="nav-item"><a href="sample-page.html" class="nav-link"><span class="pcoded-micon"><i class="feather icon-sidebar"></i></span><span class="pcoded-mtext">Sample page</span></a></li>
