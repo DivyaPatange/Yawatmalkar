@@ -8,9 +8,6 @@ use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Auth\AdminController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SubCategoryController;
-use App\Http\Controllers\Admin\DoctorScheduleController;
-use App\Http\Controllers\Admin\LawyerScheduleController;
-use App\Http\Controllers\Admin\BeauticianScheduleController;
 use App\Http\Controllers\Admin\PagesController;
 use App\Http\Controllers\Admin\BannerImageController;
 use App\Http\Controllers\Admin\TestimonialController;
@@ -22,6 +19,7 @@ use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\UserScheduleController;
 use App\Http\Controllers\User\ChangePasswordController;
 use App\Http\Controllers\User\ProductController;
+use App\Http\Controllers\User\ItemController;
 
 /*
 |--------------------------------------------------------------------------
@@ -87,7 +85,6 @@ Route::prefix('admin')->name('admin.')->group(function() {
     Route::resource('/sub-category', SubCategoryController::class);
     Route::post('/get-sub-category', [SubCategoryController::class, 'getSubCategory'])->name('get.sub-category');
     Route::post('/sub-category/update', [SubCategoryController::class, 'updateSubCategory']);
-    Route::resource('/doctors', DoctorController::class);
     Route::resource('/register', RegisterController::class);
     Route::post('/registers/upload-document', [RegisterController::class, 'uploadDocument'])->name('register.upload-document');
     Route::post('/registers/general-info', [RegisterController::class, 'saveGeneralInfo'])->name('register.general-info');
@@ -100,21 +97,7 @@ Route::prefix('admin')->name('admin.')->group(function() {
 
     // User Schedule List
     Route::resource('/schedule-data', ScheduleController::class);
-
-    Route::resource('/doctor-schedule', DoctorScheduleController::class);
-    Route::get('/doctor-schedule/status/{id}', [DoctorScheduleController::class, 'status']);
-    Route::post('/get-doctor-schedule', [DoctorScheduleController::class, 'getDoctorSchedule'])->name('get.doctor-schedule');
-    Route::post('/doctor-schedule/update', [DoctorScheduleController::class, 'updateDoctorSchedule']);
-
-    Route::resource('/lawyer-schedule', LawyerScheduleController::class);
-    Route::get('/lawyer-schedule/status/{id}', [LawyerScheduleController::class, 'status']);
-    Route::post('/get-lawyer-schedule', [LawyerScheduleController::class, 'getLawyerSchedule'])->name('get.lawyer-schedule');
-    Route::post('/lawyer-schedule/update', [LawyerScheduleController::class, 'updateLawyerSchedule']);
-
-    Route::resource('/beautician-schedule', BeauticianScheduleController::class);
-    Route::get('/beautician-schedule/status/{id}', [BeauticianScheduleController::class, 'status']);
-    Route::post('/get-beautician-schedule', [BeauticianScheduleController::class, 'getBeauticianSchedule'])->name('get.beautician-schedule');
-    Route::post('/beautician-schedule/update', [BeauticianScheduleController::class, 'updateBeauticianSchedule']);
+    Route::get('/schedule-data/status/{id}', [ScheduleController::class, 'status']);
 
     Route::resource('/pages', PagesController::class);
     Route::post('/get-page', [PagesController::class, 'getPage'])->name('get.page');
@@ -129,6 +112,8 @@ Route::prefix('admin')->name('admin.')->group(function() {
     Route::resource('/flashes-upcoming', FlashesController::class);
     Route::post('/get-flashes-upcoming', [FlashesController::class, 'getFlashesUpcoming'])->name('get.flashes-upcoming');
     Route::post('/flashes-upcoming/update', [FlashesController::class, 'updateFlashesUpcoming']);
+
+    Route::resource('/products', App\Http\Controllers\Admin\ProductController::class);
 });
 
 Auth::routes();
@@ -148,6 +133,12 @@ Route::prefix('user')->name('user.')->group(function() {
     Route::get('/schedule/get-list', [UserScheduleController::class, 'getList'])->name('schedule.getList');
     Route::resource('change-password', ChangePasswordController::class);
 
+    // Item Route
+    Route::resource('items', ItemController::class);
+    Route::post('/get-item', [ItemController::class, 'getItem'])->name('get.item');
+    Route::post('/items/update', [ItemController::class, 'updateItem']);
+
     // Product Route
     Route::resource('/products', ProductController::class);
+    Route::get('get-items-list', [ItemController::class, 'getItemList']);
 });

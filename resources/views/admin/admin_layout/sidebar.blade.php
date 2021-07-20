@@ -31,34 +31,19 @@
                         <!-- <li class=""><a href="icon-feather.html" class="">Feather<span class="pcoded-badge label label-danger">NEW</span></a></li> -->
                     </ul>
                 </li>
-                <li class="nav-item pcoded-menu-caption">
-                    <label>Category & Sub-Category</label>
-                </li>
                 <li data-username="form elements advance componant validation masking wizard picker select" class="nav-item">
                     <a href="{{ route('admin.category.index') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-file-text"></i></span><span class="pcoded-mtext">Category</span></a>
                 </li>
                 <li data-username="Table bootstrap datatable footable" class="nav-item">
                     <a href="{{ route('admin.sub-category.index') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-server"></i></span><span class="pcoded-mtext">Sub-Category</span></a>
                 </li>
-                <li class="nav-item pcoded-menu-caption">
-                    <label>Registration Form</label>
-                </li>
-                <li data-username="Charts Morris" class="nav-item"><a href="{{ route('admin.register.index') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span><span class="pcoded-mtext">Register</span></a></li>
+                <li data-username="Charts Morris" class="nav-item"><a href="{{ route('admin.register.index') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span><span class="pcoded-mtext">Registration Form</span></a></li>
             
-                <li class="nav-item pcoded-menu-caption">
-                    <label>Schedule Data</label>
+                <li data-username="Authentication Sign up Sign in reset password Change password Personal information profile settings map form subscribe" class="nav-item">
+                    <a href="{{ route('admin.schedule-data.index') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-lock"></i></span><span class="pcoded-mtext">Schedule Date</span></a>
                 </li>
-                <li data-username="Authentication Sign up Sign in reset password Change password Personal information profile settings map form subscribe" class="nav-item pcoded-hasmenu">
-                    <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="feather icon-lock"></i></span><span class="pcoded-mtext">Schedule</span></a>
-                    <ul class="pcoded-submenu">
-                        <li class=""><a href="{{ route('admin.doctor-schedule.index') }}" class="">Doctor Schedule</a></li>
-                        <li class=""><a href="{{ route('admin.lawyer-schedule.index') }}" class="">Lawyer Schedule</a></li>
-                        <li class=""><a href="{{ route('admin.beautician-schedule.index') }}" class="">Beautician Schedule</a></li>
-                        <li class=""><a href="{{ route('admin.schedule-data.index') }}" class="">Schedule Data</a></li>
-                    </ul>
-                </li>
-                <li data-username="Sample Page" class="nav-item"><a href="sample-page.html" class="nav-link"><span class="pcoded-micon"><i class="feather icon-sidebar"></i></span><span class="pcoded-mtext">Sample page</span></a></li>
-                <li data-username="Disabled Menu" class="nav-item disabled"><a href="javascript:" class="nav-link"><span class="pcoded-micon"><i class="feather icon-power"></i></span><span class="pcoded-mtext">Disabled menu</span></a></li>
+                <li data-username="Sample Page" class="nav-item"><a href="{{ route('admin.products.index') }}" class="nav-link"><span class="pcoded-micon"><i class="feather icon-sidebar"></i></span><span class="pcoded-mtext">Products</span></a></li>
+                <!-- <li data-username="Disabled Menu" class="nav-item disabled"><a href="javascript:" class="nav-link"><span class="pcoded-micon"><i class="feather icon-power"></i></span><span class="pcoded-mtext">Disabled menu</span></a></li> -->
             </ul>
         </div>
     </div>

@@ -1,5 +1,5 @@
 @extends('admin.admin_layout.main')
-@section('title', 'Add Schedule Date')
+@section('title', 'Edit Schedule Date')
 @section('customcss')
 <link href="http://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
 <link href="//cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" rel="stylesheet">
@@ -17,21 +17,22 @@
 }
 </style>
 @endsection
-@section('page_title', 'Add Schedule Data')
+@section('page_title', 'Edit Schedule Data')
 @section('breadcrumb1', 'Home')
 @section('breadcrumb2')
-<a href="{{ route('admin.schedule-data.create') }}">Add Schedule Data</a>
+<a href="{{ route('admin.schedule-data.edit', $scheduleData->id) }}">Edit Schedule Data</a>
 @endsection
 @section('content')
 <div class="row" id="firstStep">
     <div class="col-sm-12">
         <div class="card">
             <div class="card-header">
-                <h5>Add Schedule Data</h5>
+                <h5>Edit Schedule Data</h5>
             </div>
             <div class="card-body">
-                <form method="POST" id="form-submit" action="{{ route('admin.schedule-data.store') }}">
+                <form method="POST" id="form-submit" action="{{ route('admin.schedule-data.update', $scheduleData->id) }}">
                 @csrf
+                @method('PUT')
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
@@ -39,7 +40,7 @@
                                 <select class="form-control js-example" id="category_id" name="category_id">
                                     <option value="">-Select Category-</option>
                                     @foreach($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->category_name }}</option>
+                                    <option value="{{ $category->id }}" @if($scheduleData->category_id == $category->id) Selected @endif>{{ $category->category_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -48,7 +49,9 @@
                             <div class="form-group">
                                 <label>Sub-Category <span  style="color:red" id="sub_cat_err"> </span></label>
                                 <select class="form-control js-example" id="sub_category_id" name="sub_category_id">
-                                    
+                                    @foreach($subCategories as $subCategory)
+                                    <option value="{{ $subCategory->id }}" @if($scheduleData->sub_category_id == $subCategory->id) Selected @endif>{{ $subCategory->sub_category }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -56,50 +59,75 @@
                             <div class="form-group">
                                 <label>Users <span  style="color:red" id="name_err"> </span></label>
                                 <select class="form-control js-example" id="name" name="name">
-                                
+                                    @foreach($users as $user)
+                                    <option value="{{ $user->id }}" @if($scheduleData->user_id == $user->id) Selected @endif>{{ $user->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Schedule Date <span style="color:red;">*</span><span  style="color:red" id="date_err"> </span></label>
-                                <input type="date" name="s_date" class="form-control" id="s_date" placeholder="Enter Schedule Date">
+                                <input type="date" name="s_date" class="form-control" id="s_date" placeholder="Enter Schedule Date" value="{{ $scheduleData->schedule_date }}">
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Start Time <span  style="color:red" id="start_time_err"> </span></label>
-                                <input type="time" name="start_time" class="form-control" id="start_time" placeholder="Enter Start Time">
+                                <input type="time" name="start_time" class="form-control" id="start_time" placeholder="Enter Start Time" value="{{ $scheduleData->start_time }}">
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>End Time <span  style="color:red" id="end_time_err"> </span></label>
-                                <input type="time" name="end_time" class="form-control" id="end_time" placeholder="Enter End Time">
+                                <input type="time" name="end_time" class="form-control" id="end_time" placeholder="Enter End Time" value="{{ $scheduleData->end_time }}">
                             </div>
                         </div>
+                        @if($scheduleData->consulting_time != Null)
+                        <div class="col-md-3 serviceDiv">
+                            <div class="form-group">
+                                <label>Consulting Time <span  style="color:red" id="time_err"> </span></label>
+                                <select class="form-control js-example" id="time" name="time">
+                                    <option value="">-Select Consulting Time-</option>
+                                    @for($i=5; $i <= 30; $i = $i+5)
+                                    <option value="{{ $i }}" @if($scheduleData->consulting_time == $i) Selected @endif>{{ $i }} Minute</option>
+                                    @endfor
+                                </select>
+                            </div>
+                        </div>
+                        @else
                         <div class="col-md-3 serviceDiv hidden">
                             <div class="form-group">
                                 <label>Consulting Time <span  style="color:red" id="time_err"> </span></label>
                                 <select class="form-control js-example" id="time" name="time">
                                     <option value="">-Select Consulting Time-</option>
                                     @for($i=5; $i <= 30; $i = $i+5)
-                                        <option value="{{ $i }}">{{ $i }} Minute</option>
+                                    <option value="{{ $i }}" @if($scheduleData->consulting_time == $i) Selected @endif>{{ $i }} Minute</option>
                                     @endfor
                                 </select>
                             </div>
                         </div>
+                        @endif
+                        @if($scheduleData->max_appointment)
+                        <div class="col-md-3 beautyDiv">
+                            <div class="form-group">
+                                <label>Max Appointment <span  style="color:red" id="appointment_err"> </span></label>
+                                <input type="number" name="appointment" class="form-control" id="appointment" placeholder="Enter No. of Appointment" value="{{ $scheduleData->max_appointment }}">
+                            </div>
+                        </div>
+                        @else
                         <div class="col-md-3 beautyDiv hidden">
                             <div class="form-group">
                                 <label>Max Appointment <span  style="color:red" id="appointment_err"> </span></label>
                                 <input type="number" name="appointment" class="form-control" id="appointment" placeholder="Enter No. of Appointment">
                             </div>
                         </div>
+                        @endif
                         <div class="col-md-12">
                         <hr>
                         </div>
                         <div class="col-md-12">
-                            <button type="button" id="submitForm" class="btn btn-primary">Add</button>
+                            <button type="button" id="submitForm" class="btn btn-primary">Update</button>
                         </div>
                     </div>
                 </form>
@@ -227,12 +255,6 @@ $('body').on('click', '#submitForm', function () {
         $("end_time").focus();
         return false;
     }
-    // if (time=="") {
-    //     $("#time_err").fadeIn().html("Required");
-    //     setTimeout(function(){ $("#time_err").fadeOut(); }, 3000);
-    //     $("#time").focus();
-    //     return false;
-    // }
     else
     { 
         $("#form-submit").submit();

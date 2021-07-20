@@ -134,7 +134,8 @@ input[type="checkbox"].switch_1{
                                 <th>Schedule Day</th>
                                 <th>Start Time</th>
                                 <th>End Time</th>
-                                <th>Consulting Time/Max. Appointment</th>
+                                <th>Consulting Time</th>
+                                <th>Max. Appointment</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -148,7 +149,8 @@ input[type="checkbox"].switch_1{
                                 <th>Schedule Day</th>
                                 <th>Start Time</th>
                                 <th>End Time</th>
-                                <th>Consulting Time/Max. Appointment</th>
+                                <th>Consulting Time</th>
+                                <th>Max. Appointment</th>
                             </tr>
                         </tfoot>
                     </table>
@@ -158,62 +160,6 @@ input[type="checkbox"].switch_1{
     </div>
 </div>
 
-<!-- The Modal -->
-<div class="modal" id="myModal">
-    <div class="modal-dialog">
-      <div class="modal-content">
-      
-        <!-- Modal Header -->
-        <div class="modal-header">
-          <h4 class="modal-title">Edit Doctor Schedule</h4>
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-        </div>
-        <form method="POST" >
-            <!-- Modal body -->
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Doctor <span  style="color:red" id="name_err"> </span></label>
-                    <select class="form-control js-example" id="name" name="name">
-                        <option value="">-Select Doctor-</option>
-                        @foreach($users as $u)
-                        <option value="{{ $u->id }}">{{ $u->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Schedule Date <span style="color:red;">*</span><span  style="color:red" id="date_err"> </span></label>
-                    <input type="date" name="s_date" class="form-control" id="s_date" placeholder="Enter Schedule Date">
-                </div>
-                <div class="form-group">
-                    <label>Start Time <span  style="color:red" id="start_time_err"> </span></label>
-                    <input type="time" name="start_time" class="form-control" id="start_time" placeholder="Enter Start Time">
-                </div>
-                <div class="form-group">
-                    <label>End Time <span  style="color:red" id="end_time_err"> </span></label>
-                    <input type="time" name="end_time" class="form-control" id="end_time" placeholder="Enter End Time">
-                </div>
-                <div class="form-group">
-                    <label>Consulting Time <span  style="color:red" id="time_err"> </span></label>
-                    <select class="form-control js-example" id="time" name="time">
-                        <option value="">-Select Consulting Time-</option>
-                        @for($i=5; $i <= 30; $i = $i+5)
-                            <option value="{{ $i }}">{{ $i }} Minute</option>
-                        @endfor
-                    </select>
-                </div>
-            </div>
-        
-            <!-- Modal footer -->
-            <div class="modal-footer">
-            <input type="hidden" name="id" id="id" value="">
-            <button type="button" class="btn btn-success" id="editBrand" onclick="return checkSubmit()" style="padding:10px 20px">Update</button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal" style="padding:10px 20px">Close</button>
-            </div>
-        </form>
-        
-      </div>
-    </div>
-</div>
 @endsection 
 @section('customjs')
 
@@ -226,7 +172,7 @@ $.ajaxSetup({
 });
 </script>
 <script type=text/javascript>
-var SITEURL = '{{ route('admin.doctor-schedule.index')}}';
+var SITEURL = '{{ route('admin.schedule-data.index')}}';
 function format ( d ) {
     // `d` is the original data object for the row
     return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px; width:100%">'+
@@ -261,6 +207,7 @@ $(document).ready(function(){
                 { data: 'start_time', name: 'start_time'},
                 { data: 'end_time', name: 'end_time'},
                 { data: 'consulting_time', name: 'consulting_time'},
+                { data: 'max_appointment', name: 'max_appointment'},
                ],
         order: [[0, 'desc']]
       });
@@ -281,94 +228,6 @@ $(document).ready(function(){
     });
 })
 
-function EditModel(obj,bid)
-{
-    var datastring="bid="+bid;
-    // alert(datastring);
-    $.ajax({
-        type:"POST",
-        url:"{{ route('admin.get.doctor-schedule') }}",
-        data:datastring,
-        cache:false,        
-        success:function(returndata)
-        {
-            // alert(returndata);
-        if (returndata!="0") {
-            $("#myModal").modal('show');
-            var json = JSON.parse(returndata);
-            $("#id").val(json.id);
-            $("#name").val(json.name);
-            $("#s_date").val(json.schedule_date);
-            $("#start_time").val(json.start_time);
-            $("#end_time").val(json.end_time);
-            $("#time").val(json.consulting_time);
-            // $("#adv_amt").val(json.advance_amt);
-            // $("#total_amt").val(json.total_pay);
-        }
-        }
-    });
-}
-function checkSubmit()
-{
-    var name = $("#name").val();
-    var s_date = $("#s_date").val();
-    var start_time = $("#start_time").val();
-    var end_time = $("#end_time").val();
-    var time = $("#time").val();
-    var id = $("#id").val();
-    if (name=="") {
-        $("#name_err").fadeIn().html("Required");
-        setTimeout(function(){ $("#name_err").fadeOut(); }, 3000);
-        $("#name").focus();
-        return false;
-    }
-    if (s_date=="") {
-        $("#date_err").fadeIn().html("Required");
-        setTimeout(function(){ $("#date_err").fadeOut(); }, 3000);
-        $("#s_date").focus();
-        return false;
-    }
-    if (start_time == "") {
-        $("#start_time_err").fadeIn().html("Required");
-        setTimeout(function(){ $("#start_time_err").fadeOut(); }, 3000);
-        $("start_time").focus();
-        return false;
-    }
-    if (end_time == "") {
-        $("#end_time_err").fadeIn().html("Required");
-        setTimeout(function(){ $("#end_time_err").fadeOut(); }, 3000);
-        $("end_time").focus();
-        return false;
-    }
-    if (time=="") {
-        $("#time_err").fadeIn().html("Required");
-        setTimeout(function(){ $("#time_err").fadeOut(); }, 3000);
-        $("#time").focus();
-        return false;
-    }
-    else
-    { 
-        $('#editBrand').attr('disabled',true);
-        // alert(datastring);
-        $.ajax({
-            type:"POST",
-            url:"{{ url('/admin/doctor-schedule/update') }}",
-            data:{id:id, name:name, s_date:s_date, start_time:start_time, end_time:end_time, time:time},
-            cache:false,        
-            success:function(returndata)
-            {
-            $('#editBrand').attr('disabled',false);
-            $("#myModal").modal('hide');
-            var oTable = $('#zero_config').dataTable(); 
-            oTable.fnDraw(false);
-            toastr.success(returndata.success);
-            
-            // location.reload();
-            // $("#pay").val("");
-            }
-        });
-    }
-}
 
 $('body').on('click', '#delete', function () {
     var id = $(this).data("id");
@@ -376,7 +235,7 @@ $('body').on('click', '#delete', function () {
     if(confirm("Are You sure want to delete !")){
         $.ajax({
             type: "delete",
-            url: "{{ url('admin/doctor-schedule') }}"+'/'+id,
+            url: "{{ url('admin/schedule-data') }}"+'/'+id,
             success: function (data) {
             var oTable = $('#zero_config').dataTable(); 
             oTable.fnDraw(false);
@@ -395,7 +254,7 @@ $('body').on('click', '.switch_1', function () {
     if(id != ''){
         $.ajax({
             type: "get",
-            url: "{{ url('admin/doctor-schedule/status') }}"+'/'+id,
+            url: "{{ url('admin/schedule-data/status') }}"+'/'+id,
             success: function (data) {
                 // alert(data.teacher);
             var oTable = $('#zero_config').dataTable(); 

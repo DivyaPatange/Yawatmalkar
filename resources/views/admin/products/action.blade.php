@@ -1,0 +1,1 @@
+<a href="{{ route('admin.products.show', $id) }}"><button type="button" class="btn btn-outline-primary btn-sm" title="" ><i class="fa fa-eye"></i></button></a>

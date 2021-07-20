@@ -17,6 +17,8 @@
                 @endcan
                 <li><a href="{{ route('user.profile.index') }}"><i class="ti-user"></i> Profile</a></li>
                 @can('manage-provider')
+                <li><a href="{{ route('user.items.index') }}"><i class="ti-layout"></i> Items </a>
+                </li>
                 <li><a href="{{ route('user.products.index') }}"><i class="ti-panel"></i> Products </a>
                 </li>
                 @endcan

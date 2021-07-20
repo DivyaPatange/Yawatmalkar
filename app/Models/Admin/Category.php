@@ -11,7 +11,7 @@ class Category extends Model
 
     protected $table = "categories";
 
-    protected $fillable = ['category_name', 'status'];
+    protected $fillable = ['category_name', 'status', 'category_img'];
 
     public function sub_category(){
         return $this->hasMany('App\Models\Admin\SubCategory','category_id', 'id');

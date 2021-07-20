@@ -1,5 +1,5 @@
 @extends('admin.admin_layout.main')
-@section('title', 'Registration List')
+@section('title', 'Product List')
 @section('customcss')
 <link href="//cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" rel="stylesheet">
 
@@ -94,10 +94,10 @@ input[type="checkbox"].switch_1{
 }
 </style>
 @endsection
-@section('page_title', 'Registration List')
+@section('page_title', 'Product List')
 @section('breadcrumb1', 'Home')
 @section('breadcrumb2')
-<a href="{{ route('admin.register.index') }}">Registration List</a>
+<a href="{{ route('admin.products.index') }}">Product List</a>
 @endsection
 @section('content')
 <div class="row">
@@ -120,8 +120,7 @@ input[type="checkbox"].switch_1{
     <div class="col-sm-12">
         <div class="card">
             <div class="card-header">
-                <h5>Service Provider List</h5>
-                <a href="{{ route('admin.register.create') }}"><button type="button" class="btn btn-outline-primary float-right" title="" style="padding:10px 20px">Add New</button></a>
+                <h5>Product List</h5>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -129,13 +128,12 @@ input[type="checkbox"].switch_1{
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>Photo</th>
-                                <th>Name</th>
-                                <th>Role Type</th>
-                                <th>Username</th>
-                                <th>Password</th>
-                                <th>Category</th>
+                                <th>Product Image</th>
+                                <th>Item Name</th>
+                                <th>Product Name</th>
                                 <th>Sub-Category</th>
+                                <th>Selling Price</th>
+                                <th>Cost Price</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -144,13 +142,12 @@ input[type="checkbox"].switch_1{
                         <tfoot>
                             <tr>
                                 <th></th>
-                                <th>Photo</th>
-                                <th>Name</th>
-                                <th>Role Type</th>
-                                <th>Username</th>
-                                <th>Password</th>
-                                <th>Category</th>
+                                <th>Product Image</th>
+                                <th>Item Name</th>
+                                <th>Product Name</th>
                                 <th>Sub-Category</th>
+                                <th>Selling Price</th>
+                                <th>Cost Price</th>
                             </tr>
                         </tfoot>
                     </table>
@@ -160,26 +157,6 @@ input[type="checkbox"].switch_1{
     </div>
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Edit Working Shift</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div>
 @endsection 
 @section('customjs')
 
@@ -192,7 +169,7 @@ $.ajaxSetup({
 });
 </script>
 <script type=text/javascript>
-var SITEURL = '{{ route('admin.register.index')}}';
+var SITEURL = '{{ route('admin.products.index')}}';
 function format ( d ) {
     // `d` is the original data object for the row
     return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px; width:100%">'+
@@ -208,6 +185,11 @@ function format ( d ) {
 }
 $(document).ready(function(){
     var table =$('#zero_config').DataTable({
+        dom: 'lBfrtip',
+        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ],
         processing: true,
         serverSide: true,
         ajax: {
@@ -221,13 +203,12 @@ $(document).ready(function(){
                     "data":           null,
                     "defaultContent": ''
                 },
-                { data: 'photo', name: 'photo' },
-                { data: 'name', name: 'name' },
-                { data: 'acc_type', name: 'acc_type'},
-                { data: 'username', name: 'username'},
-                { data: 'password_1', name: 'password_1'},
-                { data: 'category_id', name: 'category_id'},
+                { data: 'product_img', name: 'product_img' },
+                { data: 'item_id', name: 'item_id' },
+                { data: 'product_name', name: 'product_name' },
                 { data: 'sub_category_id', name: 'sub_category_id'},
+                { data: 'selling_price', name: 'selling_price'},
+                { data: 'cost_price', name: 'cost_price'},
                ],
         order: [[0, 'desc']]
       });

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProductsTable extends Migration
+class CreateItemsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,22 +13,14 @@ class CreateProductsTable extends Migration
      */
     public function up()
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('items', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
             $table->unsignedInteger('category_id');
             $table->foreign('category_id')->references('id')->on('categories');
             $table->unsignedInteger('sub_category_id');
             $table->foreign('sub_category_id')->references('id')->on('sub_categories');
-            $table->unsignedInteger('item_id');
-            $table->foreign('item_id')->references('id')->on('items');
-            $table->string('product_name');
-            $table->string('product_img');
-            $table->decimal('selling_price', 20);
-            $table->decimal('cost_price', 20);
-            $table->text('description');
-            $table->enum('status', ['In-Stock', 'Out of Stock']);
+            $table->string('item_name');
+            $table->boolean('status')->default(1);
             $table->timestamps();
         });
     }
@@ -40,6 +32,6 @@ class CreateProductsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('items');
     }
 }

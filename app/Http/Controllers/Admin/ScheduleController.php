@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Admin\Schedule;
 use DB;
 use App\Models\Admin\Category;
+use App\Models\Admin\SubCategory;
 
 class ScheduleController extends Controller
 {
@@ -50,15 +51,14 @@ class ScheduleController extends Controller
                 return date("g:i A", strtotime($row->end_time));
             })
             ->addColumn('consulting_time', function($row){
-                if($row->consulting_time){
-                    return $row->consulting_time." Min";
-                }
-                else{
-                    return $row->max_appointment;
-                }
+                if($row->consulting_time != Null)
+                return $row->consulting_time." Min";
             })
-            ->addColumn('status', 'admin.doctorSchedule.status')
-            ->addColumn('action', 'admin.doctorSchedule.action')
+            ->addColumn('max_appointment', function($row){
+                return $row->max_appointment;
+            })
+            ->addColumn('status', 'admin.scheduleData.status')
+            ->addColumn('action', 'admin.scheduleData.action')
             ->rawColumns(['action','status', 'schedule_day', 'consulting_time'])
             ->addIndexColumn()
             ->make(true);
@@ -74,8 +74,7 @@ class ScheduleController extends Controller
     public function create()
     {
         $categories = Category::where('status', 1)->get();
-        $users = User::where('acc_type', 'doctor')->where('is_register', 'Yes')->where('status', 1)->get();
-        return view('admin.scheduleData.create', compact('users', 'categories'));
+        return view('admin.scheduleData.create', compact('categories'));
     }
 
     /**
@@ -119,7 +118,12 @@ class ScheduleController extends Controller
      */
     public function edit($id)
     {
-        //
+        $scheduleData = Schedule::findorfail($id);
+        $categories = Category::where('status', 1)->get();
+        $subCategories = SubCategory::where('category_id', $scheduleData->category_id)->where('status', 1)->get();
+        $users = DB::table('users')->join('user_infos', 'user_infos.user_id', '=', 'users.id')->select('users.*', 'user_infos.sub_category_id')
+        ->where('sub_category_id', $scheduleData->sub_category_id)->where('is_register', 'Yes')->where('status', 1)->get();
+        return view('admin.scheduleData.edit', compact('categories', 'scheduleData', 'subCategories', 'users'));
     }
 
     /**
@@ -131,7 +135,28 @@ class ScheduleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        if($request->time)
+        {
+            $time = $request->time;
+            $appointment = Null;
+        }
+        if($request->appointment)
+        {
+            $appointment = $request->appointment;
+            $time = Null;
+        }
+        $input_data = array(
+            'category_id' => $request->category_id,
+            'sub_category_id' => $request->sub_category_id,
+            'user_id' => $request->name,
+            'schedule_date' => $request->s_date,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
+            'consulting_time' => $time,
+            'max_appointment' => $appointment,
+        );
+        Schedule::whereId($id)->update($input_data);
+        return redirect('/admin/schedule-data')->with('success', 'Data Updated Successfully!');
     }
 
     /**
@@ -142,6 +167,22 @@ class ScheduleController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $schedule = Schedule::findorfail($id);
+        $schedule->delete();
+        return response()->json(['success' => 'Record Deleted Successfully!']);
+    }
+
+    public function status(Request $request, $id)
+    {
+        $schedule = Schedule::findorfail($id);
+        if($schedule->status == "Active")
+        {
+            $schedule->status = "Inactive";
+        }
+        else{
+            $schedule->status = "Active";
+        }
+        $schedule->update($request->all());
+        return response()->json(['success' => 'Status Changed Successfully!']);
     }
 }

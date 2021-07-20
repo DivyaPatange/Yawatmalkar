@@ -29,8 +29,12 @@ class CategoryController extends Controller
                 else
                 return 'Inactive';
             })
+            ->addColumn('category_img', function($row){
+                $imageUrl = asset('CategoryImg/'.$row->category_img);
+                return '<img src="'.$imageUrl.'" width="100px">';
+            })
             ->addColumn('action', 'admin.category.action')
-            ->rawColumns(['action'])
+            ->rawColumns(['action', 'category_img'])
             ->addIndexColumn()
             ->make(true);
         }
@@ -58,6 +62,13 @@ class CategoryController extends Controller
         $category = new Category();
         $category->category_name = $request->category_name;
         $category->status = $request->status;
+        $image = $request->file('category_img');
+        if($image != '')
+        {
+            $image_name = rand() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('CategoryImg'), $image_name);
+        }
+        $category->category_img = $image_name;
         $category->save();
         return response()->json(['success' => 'Category Added Successfully']);
     }
@@ -89,7 +100,7 @@ class CategoryController extends Controller
         $category = Category::where('id', $request->bid)->first();
         if (!empty($category)) 
         {
-            $data = array('id' =>$category->id,'category_name' =>$category->category_name,'status' =>$category->status
+            $data = array('id' =>$category->id,'category_name' =>$category->category_name,'status' =>$category->status, 'category_img' => $category->category_img
             );
         }else{
             $data =0;
@@ -101,9 +112,17 @@ class CategoryController extends Controller
     public function updateCategory(Request $request)
     {
         $category = Category::where('id', $request->id)->first();
+        $image_name = $request->hidden_img;
+        $image = $request->file('category_img');
+        if($image != '')
+        {
+            $image_name = rand() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('CategoryImg'), $image_name);
+        }
         $input_data = array (
             'category_name' => $request->category_name,
             'status' => $request->status,
+            'category_img' => $image_name,
         );
 
         Category::whereId($category->id)->update($input_data);
@@ -131,6 +150,7 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         $category = Category::findorfail($id);
+        unlink(public_path('CategoryImg/'.$category->category_img));
         $category->delete();
         return response()->json(['success' => 'Category Deleted Successfully']);
     }

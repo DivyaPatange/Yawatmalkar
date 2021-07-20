@@ -58,7 +58,7 @@
                     <div class="mb-4">
                         <i class="feather icon-unlock auth-icon"></i>
                     </div>
-                    <h3 class="mb-4">Login</h3>
+                    <h3 class="mb-4">Admin Login</h3>
                     <form method="POST" action="{{ route('admin.login.submit') }}">
                     @csrf
                         <div class="input-group mb-3">

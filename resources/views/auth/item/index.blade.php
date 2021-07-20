@@ -1,6 +1,6 @@
 @extends('auth.auth_layout.main')
-@section('title', 'Products')
-@section('page_title', 'Products')
+@section('title', 'Items')
+@section('page_title', 'Items')
 @section('customcss')
 <link href="{{ asset('userAssets/assets/css/lib/data-table/buttons.bootstrap.min.css') }}" rel="stylesheet" />
 <script src="https://use.fontawesome.com/d5c7b56460.js"></script>
@@ -116,8 +116,8 @@ input[type="checkbox"].switch_1{
     <div class="col-lg-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title float-left">Products List</h4>
-                <a href="{{ route('user.products.create') }}"><button type="button" class="btn btn-outline-primary float-right" title="">Add New</button></a>
+                <h4 class="card-title float-left">Items List</h4>
+                <a href="{{ route('user.items.create') }}"><button type="button" class="btn btn-outline-primary float-right" title="">Add New</button></a>
             </div>
             <div class="bootstrap-data-table-panel">
                 <div class="table-responsive">
@@ -125,12 +125,11 @@ input[type="checkbox"].switch_1{
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>Product Image</th>
-                                <th>Item Name</th>
-                                <th>Product Name</th>
+                                <th>Category</th>
                                 <th>Sub-Category</th>
-                                <th>Selling Price</th>
-                                <th>Cost Price</th>
+                                <th>Item Name</th>
+                                <th>Status</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -145,6 +144,52 @@ input[type="checkbox"].switch_1{
     <!-- /# column -->
 </div>
 
+<!-- The Modal -->
+<div class="modal" id="myModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Edit Schedule</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <form method="POST" >
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Category<span style="color:red;">*</span><span  style="color:red" id="cat_err"> </span></label>
+                    <select name="category_id" class="form-control" id="category_id">
+                        <option value="">Choose</option>
+                        @foreach($categories as $category)
+                        <option value="{{ $category->id }}">{{ $category->sub_category }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Item Name <span  style="color:red" id="item_err"> </span></label>
+                    <input type="text" name="item_name" class="form-control" id="item_name" placeholder="Enter Item Name">
+                </div>
+                <div class="form-group">
+                    <label>Status <span  style="color:red" id="status_err"> </span></label>
+                    <select name="status" class="form-control" id="status">
+                        <option value="">-Select Status-</option>
+                        <option value="1">Active</option>
+                        <option value="0">Inactive</option>
+                    </select>
+                </div>
+            </div>   
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <input type="hidden" name="id" id="id" value="">
+                <button type="button" class="btn btn-success" id="editBrand" onclick="return checkSubmit()" style="padding:10px 20px">Update</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal" style="padding:10px 20px">Close</button>
+            </div>
+        </form>
+        
+      </div>
+    </div>
+</div>
 @endsection 
 @section('customjs')
 <!-- scripit init-->
@@ -163,20 +208,8 @@ $.ajaxSetup({
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
 });
-var SITEURL = '{{ route('user.products.index')}}';
-function format ( d ) {
-    // `d` is the original data object for the row
-    return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px; width:100%">'+
-        '<tr>'+
-            '<td style="text-align:center">Status</td>'+
-            '<td style="text-align:center">'+d.status+'</td>'+
-        '</tr>'+
-        '<tr>'+
-            '<td style="text-align:center">Action</td>'+
-            '<td style="text-align:center">'+d.action+'</td>'+
-        '</tr>'+
-    '</table>';
-}
+var SITEURL = '{{ route('user.items.index')}}';
+
 $(document).ready(function(){
     var table =$('#bootstrap-data-table-export').DataTable({
         dom: 'lBfrtip',
@@ -191,47 +224,96 @@ $(document).ready(function(){
         type: 'GET',
         },
         columns: [
-                {
-                    "className":      'details-control',
-                    "orderable":      false,
-                    "data":           null,
-                    "defaultContent": ''
-                },
-                { data: 'product_img', name: 'product_img' },
-                { data: 'item_id', name: 'item_id' },
-                { data: 'product_name', name: 'product_name' },
-                { data: 'sub_category_id', name: 'sub_category_id'},
-                { data: 'selling_price', name: 'selling_price'},
-                { data: 'cost_price', name: 'cost_price'},
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false,searchable: false },
+                { data: 'category_id', name: 'category_id' },
+                { data: 'sub_category_id', name: 'sub_category_id' },
+                { data: 'item_name', name: 'item_name'},
+                { data: 'status', name: 'status'},
+                { data: 'action', name: 'action'},
                ],
         order: [[0, 'desc']]
-      });
-      $('#bootstrap-data-table-export tbody').on('click', 'td.details-control', function () {
-        var tr = $(this).closest('tr');
-        var row = table.row( tr );
- 
-        if ( row.child.isShown() ) {
-            // This row is already open - close it
-            row.child.hide();
-            tr.removeClass('shown');
-        }
-        else {
-            // Open this row
-            row.child( format(row.data()) ).show();
-            tr.addClass('shown');
-        }
     });
 })
 
+
+function EditModel(obj,bid)
+{
+    var datastring="bid="+bid;
+    // alert(datastring);
+    $.ajax({
+        type:"POST",
+        url:"{{ route('user.get.item') }}",
+        data:datastring,
+        cache:false,        
+        success:function(returndata)
+        {
+            // alert(returndata);
+        if (returndata!="0") {
+            $("#myModal").modal('show');
+            var json = JSON.parse(returndata);
+            $("#id").val(json.id);
+            $("#category_id").val(json.sub_category_id);
+            $("#item_name").val(json.item_name);
+            $("#status").val(json.status);
+        }
+        }
+    });
+}
 </script>
 <script>
+
+function checkSubmit()
+{
+    var category_id = $("#category_id").val();
+    var item_name = $("#item_name").val();
+    var status = $("#status").val();
+    var id = $("#id").val();
+    if (category_id=="") {
+        $("#cat_err").fadeIn().html("Required");
+        setTimeout(function(){ $("#cat_err").fadeOut(); }, 3000);
+        $("#category_id").focus();
+        return false;
+    }
+    if (item_name == "") {
+        $("#name_err").fadeIn().html("Required");
+        setTimeout(function(){ $("#name_err").fadeOut(); }, 3000);
+        $("item_name").focus();
+        return false;
+    }
+    if (status == "") {
+        $("#status_err").fadeIn().html("Required");
+        setTimeout(function(){ $("#status_err").fadeOut(); }, 3000);
+        $("status").focus();
+        return false;
+    }
+    else
+    { 
+        $('#editBrand').attr('disabled',true);
+        // alert(datastring);
+        $.ajax({
+            type:"POST",
+            url:"{{ url('/user/items/update') }}",
+            data:{id:id, category_id:category_id, item_name:item_name, status:status},
+            cache:false,        
+            success:function(returndata)
+            {
+                $('#editBrand').attr('disabled',false);
+                $("#myModal").modal('hide');
+                var oTable = $('#bootstrap-data-table-export').dataTable(); 
+                oTable.fnDraw(false);
+                toastr.success(returndata.success);
+            }
+        });
+    }
+}
+
 $('body').on('click', '#delete', function () {
     var id = $(this).data("id");
 
     if(confirm("Are You sure want to delete !")){
         $.ajax({
             type: "delete",
-            url: "{{ url('user/schedule') }}"+'/'+id,
+            url: "{{ url('user/items') }}"+'/'+id,
             success: function (data) {
             var oTable = $('#bootstrap-data-table-export').dataTable(); 
             oTable.fnDraw(false);
