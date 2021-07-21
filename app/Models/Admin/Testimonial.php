@@ -11,5 +11,5 @@ class Testimonial extends Model
 
     protected $table = "testimonials";
 
-    protected $fillable = ['page_id', 'image', 'description', 'status'];
+    protected $fillable = ['category_id', 'image', 'description', 'status'];
 }

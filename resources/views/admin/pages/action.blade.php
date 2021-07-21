@@ -1,2 +1,0 @@
-<button type="button" class="btn btn-square btn-primary" onclick="EditModel(this, {{ $id }})">Edit</button>
-<a href="javascript:void(0)" id="delete" data-id="{{ $id }}"><button type="button" class="btn btn-square btn-danger">Delete</button></a>

@@ -21,11 +21,11 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="page_name">Page Name <span style="color:red;">*</span><span  style="color:red" id="page_err"> </span></label>
-                                <select name="page_name" class="form-control" id="page_name">
-                                    <option value="">-Select Page Name-</option>
-                                    @foreach($pages as $page)                              
-                                    <option value="{{ $page->id }}" @if($testimonial->page_id == $page->id) Selected @endif>{{ $page->page_name }}</option>
+                                <label for="category_id">Category <span style="color:red;">*</span><span  style="color:red" id="cat_err"> </span></label>
+                                <select name="category_id" class="form-control" id="category_id">
+                                    <option value="">-Select Category-</option>
+                                    @foreach($categories as $cat)                              
+                                    <option value="{{ $cat->id }}" @if($testimonial->category_id == $cat->id) Selected @endif>{{ $cat->category_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -78,11 +78,11 @@ $(document).ready(function () {
     $('.ckeditor').ckeditor();
 });
 $('body').on('click', '#submitButton', function() {
-    var page_name = $("#page_name").val();
-    if (page_name=="") {
-        $("#page_err").fadeIn().html("Required");
-        setTimeout(function(){ $("#page_err").fadeOut(); }, 3000);
-        $("#page_name").focus();
+    var category_id = $("#category_id").val();
+    if (category_id=="") {
+        $("#cat_err").fadeIn().html("Required");
+        setTimeout(function(){ $("#cat_err").fadeOut(); }, 3000);
+        $("#category_id").focus();
         return false;
     }
     var image = $("#image").val();

@@ -27,32 +27,28 @@
     </div>
     <div class="container-fluid">
         <div class="row headBottomBar align-items-center">
-            <div class="col cat text-center">
-                <p>All Service & Products</p>
-            </div>
-            <div class="col cat text-center">
-                <p>MainCategories</p>
-            </div>
-            <div class="col cat text-center">
-                <p>Top SubCategories</p>
-            </div>
-            <div class="col cat text-center">
-                <p>Top Deals</p>
-            </div>
-            <div class="col cat text-center">
-                <p>News & Events</p>
-            </div>
-            <div class="col cat text-center">
-                <p>Offers & Essentials</p>
-            </div>
-            <div class="col cat text-center">
-                <p>Best Discounts</p>
-            </div>
-            <div class="col cat text-center">
-                <p>Packages</p>
-            </div>
-            <div class="col cat text-center">
-                <p>Customization</p>
+            <div class="col-md-12 p-0">
+            <header class="nav-header">
+                <span class="logo">
+                    <?php 
+                        $categories = DB::table('categories')->where('status', 1)->get();
+                    ?>
+                    <select name="" id="category" class="form-control category">
+                        <option value="">All Products & Services</option>
+                        @foreach($categories as $category)
+                        <option value="{{ $category->id }}">{{ $category->category_name }}</option>
+                        @endforeach
+                    </select>
+                </span>
+                <nav class="middle scroll" id="navbarDiv">
+                <?php 
+                    $subCategories = DB::table('sub_categories')->where('status', 1)->get();
+                ?>
+                    @foreach($subCategories as $subCategory)
+                    <span class="item">{{ $subCategory->sub_category }}</span>
+                    @endforeach
+                </nav>
+            </header>
             </div>
         </div>
     </div>

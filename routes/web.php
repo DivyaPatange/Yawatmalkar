@@ -8,7 +8,6 @@ use App\Http\Controllers\Auth\AdminLoginController;
 use App\Http\Controllers\Auth\AdminController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SubCategoryController;
-use App\Http\Controllers\Admin\PagesController;
 use App\Http\Controllers\Admin\BannerImageController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\FlashesController;
@@ -21,6 +20,7 @@ use App\Http\Controllers\User\ChangePasswordController;
 use App\Http\Controllers\User\ProductController;
 use App\Http\Controllers\User\ItemController;
 
+use App\Http\Controllers\DesignController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -72,6 +72,8 @@ Route::get('/seed', function () {
     return 'DONE'; //Return anything
 });
 
+Route::get('/get-subcategory-list', [DesignController::class, 'getSubcategoryList']);
+Route::get('/{id}', [DesignController::class, 'getCategoryPage']);
 
 Route::prefix('admin')->name('admin.')->group(function() {
     // Admin Authentication Route
@@ -98,10 +100,6 @@ Route::prefix('admin')->name('admin.')->group(function() {
     // User Schedule List
     Route::resource('/schedule-data', ScheduleController::class);
     Route::get('/schedule-data/status/{id}', [ScheduleController::class, 'status']);
-
-    Route::resource('/pages', PagesController::class);
-    Route::post('/get-page', [PagesController::class, 'getPage'])->name('get.page');
-    Route::post('/page/update', [PagesController::class, 'updatePage']);
 
     // Banner Image Route
     Route::resource('/banner-image', BannerImageController::class);

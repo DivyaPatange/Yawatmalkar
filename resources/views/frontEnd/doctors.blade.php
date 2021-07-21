@@ -1,22 +1,20 @@
-@extends('frontEnd.frontLayout.main')
-@section('title', 'Doctors')
-@section('customcss')
 
-@endsection
-@section('content')
-
-<main id="main">
-    <section class="container-fluid py-0" style="height:70vh;background-image: linear-gradient(45deg, #4fbcc6c7, #4fbcc6c7), url({{ ('frontAsset/img/doctorMain.jpg') }});width: 100%;background-size: cover;">
-        <div class="row justify-content-center">
+    <?php 
+        $bannerImg = DB::table('banner_images')->where('category_id', $cat->id)->where('status', 1)->first();
+    ?>
+    @if($bannerImg)
+    <section class="container-fluid py-0" style="height:70vh;background-image: linear-gradient(45deg, #4fbcc6c7, #4fbcc6c7), url({{ ('BannerImg/'.$bannerImg->banner_img) }});width: 100%;background-size: cover;">
+        <!-- <div class="row justify-content-center">
             <div class="col-12 col-md-9 py-5 px-5 text-center">
                 <h1 style="font-size:60px;font-weight:bold;color:#fff;padding-top:82px;">Looking for an  <span style="color:#000;">EXPERT DOCTORS</span> </h1>
                 <p style="font-weight:bold;">Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt ut deserunt odio id, vero provident hic iure quod labore et magni optio nihil. Magni quam molestias fuga fugiat maxime placeat!</p>
             </div>
-        </div>
+        </div> -->
     </section>
+    @endif
     <!-- ladies beauty service -->
     <section class="container-fluid py-5">
-        <h2 style="font-size:48px;font-weight:bold;text-align:center;color#000;">  OUR <span style="color:#4FBCC6">SPECIALIST</span> </h2>
+        <h2 style="font-size:48px;font-weight:bold;text-align:center;color#000;"> <span style="color:#4FBCC6">{{ $cat->category_name }}</span> </h2>
         <div class="container py-5">
             <div class="row card-deck">
                 <div class="col-12 col-md-3 card text-center px-0" style="background:#F7F7F7;border:none;">
@@ -155,8 +153,6 @@
     </section>
 </main>
 
-@endsection
-@section('customjs')
 <script>
     AOS.init();
 </script>   
@@ -166,5 +162,3 @@ $(document).ready(function() {
     var s = skrollr.init();
 })
 </script>
-
-@endsection

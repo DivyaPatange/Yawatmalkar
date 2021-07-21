@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Admin\Flash;
-use App\Models\Admin\Page;
+use App\Models\Admin\Category;
 
 class FlashesController extends Controller
 {
@@ -21,15 +21,15 @@ class FlashesController extends Controller
      */
     public function index()
     {
-        $pages = Page::where('status', 1)->get();
+        $categories = Category::where('status', 1)->get();
         $flashes = Flash::orderBy('id', 'DESC')->get();
         if(request()->ajax()) {
             return datatables()->of($flashes)
-            ->addColumn('page_name', function($row){
-                $page = Page::where('id', $row->page_id)->first();
-                if(!empty($page))
+            ->addColumn('category_id', function($row){
+                $category = Category::where('id', $row->category_id)->first();
+                if(!empty($category))
                 {
-                    return $page->page_name;
+                    return $category->category_name;
                 }
             })
             ->addColumn('image', function($row){
@@ -47,7 +47,7 @@ class FlashesController extends Controller
             ->addIndexColumn()
             ->make(true);
         }
-        return view('admin.flashes-upcoming.index', compact('pages'));
+        return view('admin.flashes-upcoming.index', compact('categories'));
     }
 
     /**
@@ -69,7 +69,7 @@ class FlashesController extends Controller
     public function store(Request $request)
     {
         $flashes = new Flash();
-        $flashes->page_id = $request->page_name;
+        $flashes->category_id = $request->category_id;
         $flashes->status = $request->status;
         $image = $request->file('image');
         if($image != '')
@@ -110,7 +110,7 @@ class FlashesController extends Controller
         if (!empty($flashes)) 
         {
             $image = asset('FlashesUpcoming/'.$flashes->flash_img);
-            $data = array('id' =>$flashes->id,'page_name' =>$flashes->page_id,'status' =>$flashes->status, 'hidden_img' => $flashes->flash_img, 'image' =>$image,
+            $data = array('id' =>$flashes->id,'category_id' =>$flashes->category_id,'status' =>$flashes->status, 'hidden_img' => $flashes->flash_img, 'image' =>$image,
             );
         }else{
             $data =0;
@@ -129,7 +129,7 @@ class FlashesController extends Controller
             $image->move(public_path('FlashesUpcoming'), $image_name);
         }
         $input_data = array (
-            'page_id' => $request->page_name,
+            'category_id' => $request->category_id,
             'status' => $request->status,
             'flash_img' => $image_name,
         );

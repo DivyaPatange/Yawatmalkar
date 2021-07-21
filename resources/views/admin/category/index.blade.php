@@ -336,12 +336,9 @@ $.ajaxSetup({
                 success:function(returndata)
                 {
                     document.getElementById("form-submit").reset();
-                var oTable = $('#zero_config').dataTable(); 
-                oTable.fnDraw(false);
-                toastr.success(returndata.success);
-                
-                // location.reload();
-                // $("#pay").val("");
+                    var oTable = $('#zero_config').dataTable(); 
+                    oTable.fnDraw(false);
+                    toastr.success(returndata.success);
                 }
             });
         }

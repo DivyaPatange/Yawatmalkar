@@ -43,6 +43,10 @@ class SubCategoryController extends Controller
         $subCategory = SubCategory::orderBy('id', 'DESC')->get();
         if(request()->ajax()) {
             return datatables()->of($subCategory)
+            ->addColumn('image', function($row){
+                $imageUrl = asset('SubCategoryImg/'.$row->image);
+                return '<img src="'.$imageUrl.'" width="100px">';
+            })
             ->addColumn('category_id', function(SubCategory $subCategory1){
                 if(!empty($subCategory1->category->category_name)){
                 return $subCategory1->category->category_name;
@@ -55,7 +59,7 @@ class SubCategoryController extends Controller
                 return 'Inactive';
             })
             ->addColumn('action', 'admin.subCategory.action')
-            ->rawColumns(['action'])
+            ->rawColumns(['action', 'image'])
             ->addIndexColumn()
             ->make(true);
         }
@@ -84,6 +88,14 @@ class SubCategoryController extends Controller
         $subCategory->category_id = $request->category_name;
         $subCategory->sub_category = $request->sub_category;
         $subCategory->status = $request->status;
+        $image = $request->file('image');
+        if($image != '')
+        {
+            $image_name = rand() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('subCategoryImg'), $image_name);
+        }
+        $subCategory->image = $image_name;
+        $subCategory->description = $request->description;
         $subCategory->save();
         return response()->json(['success' => 'Sub-Category Added Successfully']);
     }

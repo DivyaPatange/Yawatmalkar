@@ -11,5 +11,5 @@ class Flash extends Model
 
     protected $table = "flashes";
 
-    protected $fillable = ['page_id', 'flash_img', 'status'];
+    protected $fillable = ['category_id', 'flash_img', 'status'];
 }

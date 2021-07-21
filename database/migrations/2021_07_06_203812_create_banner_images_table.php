@@ -15,8 +15,8 @@ class CreateBannerImagesTable extends Migration
     {
         Schema::create('banner_images', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('page_id');
-            $table->foreign('page_id')->references('id')->on('pages');
+            $table->unsignedInteger('category_id');
+            $table->foreign('category_id')->references('id')->on('categories');
             $table->string('banner_img');
             $table->boolean('status')->default(1);
             $table->timestamps();

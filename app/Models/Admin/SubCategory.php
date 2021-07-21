@@ -11,7 +11,7 @@ class SubCategory extends Model
 
     protected $table = "sub_categories";
 
-    protected $fillable = ['category_id', 'sub_category', 'status'];
+    protected $fillable = ['category_id', 'sub_category', 'status', 'image', 'description'];
 
     public function category(){
         return $this->belongsTo('App\Models\Admin\Category','category_id', 'id');

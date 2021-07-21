@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Admin\Testimonial;
-use App\Models\Admin\Page;
+use App\Models\Admin\Category;
 
 class TestimonialController extends Controller
 {
@@ -21,15 +21,15 @@ class TestimonialController extends Controller
      */
     public function index()
     {
-        $pages = Page::where('status', 1)->get();
+        $categories = Category::where('status', 1)->get();
         $testimonials = Testimonial::all();
         if(request()->ajax()) {
             return datatables()->of($testimonials)
-            ->addColumn('page_name', function($row){
-                $page = Page::where('id', $row->page_id)->first();
-                if(!empty($page))
+            ->addColumn('category_id', function($row){
+                $category = Category::where('id', $row->category_id)->first();
+                if(!empty($category))
                 {
-                    return $page->page_name;
+                    return $category->category_name;
                 }
             })
             ->addColumn('image', function($row){
@@ -47,7 +47,7 @@ class TestimonialController extends Controller
             ->addIndexColumn()
             ->make(true);
         }
-        return view('admin.testimonial.index', compact('pages'));
+        return view('admin.testimonial.index', compact('categories'));
     }
 
     /**
@@ -69,7 +69,7 @@ class TestimonialController extends Controller
     public function store(Request $request)
     {
         $testimonial = new Testimonial();
-        $testimonial->page_id = $request->page_name;
+        $testimonial->category_id = $request->category_id;
         $image = $request->file('image');
         if($image != '')
         {
@@ -102,10 +102,10 @@ class TestimonialController extends Controller
      */
     public function edit($id)
     {
-        $pages = Page::where('status', 1)->get();
+        $categories = Category::where('status', 1)->get();
         $testimonial = Testimonial::findorfail($id);
-        // dd($testimonial->page_id);
-        return view('admin.testimonial.edit', compact('testimonial', 'pages'));
+        // dd($testimonial->category_id);
+        return view('admin.testimonial.edit', compact('testimonial', 'categories'));
     }
 
     /**
@@ -126,7 +126,7 @@ class TestimonialController extends Controller
             $image->move(public_path('TestimonialImg'), $image_name);
         }
         $input_data = array(
-            'page_id' => $request->page_name,
+            'category_id' => $request->category_id,
             'image' => $image_name,
             'description' => $request->description,
             'status' => $request->status,

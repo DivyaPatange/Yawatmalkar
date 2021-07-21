@@ -15,8 +15,8 @@ class CreateTestimonialsTable extends Migration
     {
         Schema::create('testimonials', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('page_id');
-            $table->foreign('page_id')->references('id')->on('pages');
+            $table->unsignedInteger('category_id');
+            $table->foreign('category_id')->references('id')->on('categories');
             $table->string('image');
             $table->text('description');
             $table->boolean('status')->default(1);

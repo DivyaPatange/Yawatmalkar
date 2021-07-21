@@ -6,6 +6,23 @@
 <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet"/>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+<script src="https://use.fontawesome.com/d5c7b56460.js"></script>
+<style>
+td.details-control:before {
+    font-family: 'FontAwesome';
+    content: '\f105';
+    display: block;
+    text-align: center;
+    font-size: 20px;
+}
+tr.shown td.details-control:before{
+   font-family: 'FontAwesome';
+    content: '\f107';
+    display: block;
+    text-align: center;
+    font-size: 20px;
+}
+</style>
 @endsection
 @section('page_title', 'Sub-Category')
 @section('breadcrumb1', 'Home')
@@ -20,7 +37,7 @@
                 <h5>Add Sub-Category</h5>
             </div>
             <div class="card-body">
-                <form method="POST" id="form-submit">
+                <form method="POST" id="form-submit" enctype="multipart/form-data">
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
@@ -35,8 +52,14 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="category_name">Sub-Category <span style="color:red;">*</span><span  style="color:red" id="sub_category_err"> </span></label>
+                                <label for="sub_category">Sub-Category <span style="color:red;">*</span><span  style="color:red" id="sub_category_err"> </span></label>
                                 <input type="text" name="sub_category" class="form-control" id="sub_category" placeholder="Enter Sub-Category">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="image">Image <span style="color:red;">*</span><span  style="color:red" id="img_err"> </span></label>
+                                <input type="file" name="image" class="form-control" id="image">
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -49,8 +72,14 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label for="description">Description <span style="color:red;">*</span><span  style="color:red" id="description_err"> </span></label>
+                                <textarea name="description" class="form-control" id="description" placeholder="Description"></textarea>
+                            </div>
+                        </div>
                         <div class="col-md-12">
-                            <button type="button" id="submitForm" class="btn btn-primary">Submit</button>
+                            <button type="submit" id="submitForm" class="btn btn-primary">Submit</button>
                         </div>
                     </div>
                 </form>
@@ -70,6 +99,7 @@
                         <thead>
                             <tr>
                                 <th>Sr. No.</th>
+                                <th>Image</th>
                                 <th>Category</th>
                                 <th>Sub-Category</th>
                                 <th>Status</th>
@@ -82,6 +112,7 @@
                         <tfoot>
                             <tr>
                                 <th>Sr. No.</th>
+                                <th>Image</th>
                                 <th>Category</th>
                                 <th>Sub-Category</th>
                                 <th>Status</th>
@@ -104,7 +135,7 @@
           <h4 class="modal-title">Edit Sub-Category</h4>
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div>
-        <form method="POST" >
+        <form method="POST" enctype="multipart/form-data" id="editform">
             <!-- Modal body -->
             <div class="modal-body">
                 <div class="form-group">
@@ -155,6 +186,17 @@ $.ajaxSetup({
   var SITEURL = '{{ URL::to('/admin/sub-category')}}';
     // var brand = "brand";
     // alert(brand);
+function format ( d ) {
+// `d` is the original data object for the row
+    return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px; width:100%">'+
+        '<tr>'+
+            '<td style="text-align:center">Description</td>'+
+            '<td style="text-align:center">'+d.description+'</td>'+
+        '</tr>'+
+    '</table>';
+}
+$(document).ready(function(){
+    var table =
     $('#zero_config').DataTable({
          processing: true,
          serverSide: true,
@@ -163,151 +205,205 @@ $.ajaxSetup({
           type: 'GET',
          },
          columns: [
-                  {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false,searchable: false},
+                  {
+                        "className":      'details-control',
+                        "orderable":      false,
+                        "data":           null,
+                        "defaultContent": ''
+                  },
+                  { data: 'image', name: 'image' },
                   { data: 'category_id', name: 'category_id' },
                   { data: 'sub_category', name: 'sub_category' },
                   { data: 'status', name: 'status' },
                   {data: 'action', name: 'action', orderable: false},
                ],
         order: [[0, 'desc']]
-      });
+    });
+    $('#zero_config tbody').on('click', 'td.details-control', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row( tr );
+ 
+        if ( row.child.isShown() ) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+        }
+        else {
+            // Open this row
+            row.child( format(row.data()) ).show();
+            tr.addClass('shown');
+        }
+    });
+})
 
-    function EditModel(obj,bid)
-    {
-        var datastring="bid="+bid;
+function EditModel(obj,bid)
+{
+    var datastring="bid="+bid;
+    // alert(datastring);
+    $.ajax({
+        type:"POST",
+        url:"{{ route('admin.get.sub-category') }}",
+        data:datastring,
+        cache:false,        
+        success:function(returndata)
+        {
+            // alert(returndata);
+        if (returndata!="0") {
+            $("#myModal").modal('show');
+            var json = JSON.parse(returndata);
+            $("#id").val(json.id);
+            $("#edit_category_name").val(json.category_name);
+            $("#edit_sub_category").val(json.sub_category);
+            $("#edit_status").val(json.status);
+            // $("#adv_amt").val(json.advance_amt);
+            // $("#total_amt").val(json.total_pay);
+        }
+        }
+    });
+}
+function checkSubmit()
+{
+    var category_name = $("#edit_category_name").val();
+    var sub_category = $("#edit_sub_category").val();
+    var status = $("#edit_status").val();
+    var id = $("#id").val().trim();
+    if (category_name=="") {
+        $("#edit_category_err").fadeIn().html("Required");
+        setTimeout(function(){ $("#edit_category_err").fadeOut(); }, 3000);
+        $("#edit_category_name").focus();
+        return false;
+    }
+    if (sub_category=="") {
+        $("#edit_sub_category_err").fadeIn().html("Required");
+        setTimeout(function(){ $("#edit_sub_category_err").fadeOut(); }, 3000);
+        $("#edit_sub_category").focus();
+        return false;
+    }
+    if (status=="") {
+        $("#edit_status_err").fadeIn().html("Required");
+        setTimeout(function(){ $("#edit_status_err").fadeOut(); }, 3000);
+        $("#edit_status").focus();
+        return false;
+    }
+    else
+    { 
+        $('#editBrand').attr('disabled',true);
+        var datastring="category_name="+category_name+"&status="+status+"&id="+id+"&sub_category="+sub_category;
         // alert(datastring);
         $.ajax({
             type:"POST",
-            url:"{{ route('admin.get.sub-category') }}",
+            url:"{{ url('/admin/sub-category/update') }}",
             data:datastring,
             cache:false,        
             success:function(returndata)
             {
-                // alert(returndata);
-            if (returndata!="0") {
-                $("#myModal").modal('show');
-                var json = JSON.parse(returndata);
-                $("#id").val(json.id);
-                $("#edit_category_name").val(json.category_name);
-                $("#edit_sub_category").val(json.sub_category);
-                $("#edit_status").val(json.status);
-                // $("#adv_amt").val(json.advance_amt);
-                // $("#total_amt").val(json.total_pay);
-            }
+            $('#editBrand').attr('disabled',false);
+            $("#myModal").modal('hide');
+            var oTable = $('#zero_config').dataTable(); 
+            oTable.fnDraw(false);
+            toastr.success(returndata.success);
+            
+            // location.reload();
+            // $("#pay").val("");
             }
         });
     }
-    function checkSubmit()
-    {
-        var category_name = $("#edit_category_name").val();
-        var sub_category = $("#edit_sub_category").val();
-        var status = $("#edit_status").val();
-        var id = $("#id").val().trim();
-        if (category_name=="") {
-            $("#edit_category_err").fadeIn().html("Required");
-            setTimeout(function(){ $("#edit_category_err").fadeOut(); }, 3000);
-            $("#edit_category_name").focus();
-            return false;
-        }
-        if (sub_category=="") {
-            $("#edit_sub_category_err").fadeIn().html("Required");
-            setTimeout(function(){ $("#edit_sub_category_err").fadeOut(); }, 3000);
-            $("#edit_sub_category").focus();
-            return false;
-        }
-        if (status=="") {
-            $("#edit_status_err").fadeIn().html("Required");
-            setTimeout(function(){ $("#edit_status_err").fadeOut(); }, 3000);
-            $("#edit_status").focus();
-            return false;
-        }
-        else
-        { 
-            $('#editBrand').attr('disabled',true);
-            var datastring="category_name="+category_name+"&status="+status+"&id="+id+"&sub_category="+sub_category;
-            // alert(datastring);
-            $.ajax({
-                type:"POST",
-                url:"{{ url('/admin/sub-category/update') }}",
-                data:datastring,
-                cache:false,        
-                success:function(returndata)
-                {
-                $('#editBrand').attr('disabled',false);
-                $("#myModal").modal('hide');
-                var oTable = $('#zero_config').dataTable(); 
-                oTable.fnDraw(false);
-                toastr.success(returndata.success);
-                
-                // location.reload();
-                // $("#pay").val("");
-                }
-            });
-        }
+}
+
+$('body').on('click', '#delete', function () {
+    var id = $(this).data("id");
+
+    if(confirm("Are You sure want to delete !")){
+        $.ajax({
+            type: "delete",
+            url: "{{ url('admin/sub-category') }}"+'/'+id,
+            success: function (data) {
+            var oTable = $('#zero_config').dataTable(); 
+            oTable.fnDraw(false);
+            toastr.success(data.success);
+            },
+            error: function (data) {
+                console.log('Error:', data);
+            }
+        });
     }
+});
 
-    $('body').on('click', '#delete', function () {
-        var id = $(this).data("id");
-  
-        if(confirm("Are You sure want to delete !")){
-            $.ajax({
-                type: "delete",
-                url: "{{ url('admin/sub-category') }}"+'/'+id,
-                success: function (data) {
-                var oTable = $('#zero_config').dataTable(); 
-                oTable.fnDraw(false);
-                toastr.success(data.success);
-                },
-                error: function (data) {
-                    console.log('Error:', data);
-                }
-            });
-        }
-    });
-
-    $('body').on('click', '#submitForm', function () {
-        var category_name = $("#category_name").val();
-        var sub_category = $("#sub_category").val();
-        var status = $("#status").val();
-        if (category_name=="") {
-            $("#category_err").fadeIn().html("Required");
-            setTimeout(function(){ $("#category_err").fadeOut(); }, 3000);
-            $("#category_name").focus();
+$('body').on('submit', '#form-submit', function (event) {
+    event.preventDefault();
+    var formdata = new FormData(this);
+    var category_name = $("#category_name").val();
+    var sub_category = $("#sub_category").val();
+    var status = $("#status").val();
+    var photo = $("#image").val();
+    var exts = ['jpg','jpeg','png'];
+    if (category_name=="") {
+        $("#category_err").fadeIn().html("Required");
+        setTimeout(function(){ $("#category_err").fadeOut(); }, 3000);
+        $("#category_name").focus();
+        return false;
+    }
+    if (sub_category=="") {
+        $("#sub_category_err").fadeIn().html("Required");
+        setTimeout(function(){ $("#sub_category_err").fadeOut(); }, 3000);
+        $("#sub_category").focus();
+        return false;
+    }
+    if (photo=="") {
+        $("#img_err").fadeIn().html("Required");
+        setTimeout(function(){ $("#img_err").fadeOut(); }, 3000);
+        $("#image").focus();
+        return false;
+    }
+    if(photo)
+    {
+        var get_ext = photo.split('.');
+        // reverse name to check extension
+        get_ext = get_ext.reverse();
+        // check file type is valid as given in 'exts' array
+        if ( $.inArray ( get_ext[0].toLowerCase(), exts ) > -1 ){
+            console.log( 'Allowed extension!' );
+        } else {
+            $("#img_err").fadeIn().html("Required Extension are jpg ,jpeg ,png");
+            setTimeout(function(){ $("#img_err").fadeOut(); }, 3000);
+            $("#image").focus();
             return false;
         }
-        if (sub_category=="") {
-            $("#sub_category_err").fadeIn().html("Required");
-            setTimeout(function(){ $("#sub_category_err").fadeOut(); }, 3000);
-            $("#sub_category").focus();
-            return false;
-        }
-        if (status=="") {
-            $("#status_err").fadeIn().html("Required");
-            setTimeout(function(){ $("#status_err").fadeOut(); }, 3000);
-            $("#status").focus();
-            return false;
-        }
-        else
-        { 
-            var datastring="category_name="+category_name+"&status="+status+"&sub_category="+sub_category;
-            // alert(datastring);
-            $.ajax({
-                type:"POST",
-                url:"{{ route('admin.sub-category.store') }}",
-                data:datastring,
-                cache:false,        
-                success:function(returndata)
-                {
-                    document.getElementById("form-submit").reset();
+        
+        var file_size = $('#image')[0].files[0].size;
+    }
+    if(file_size>200000) {
+        $("#img_err").fadeIn().html("File Size should be less than 200kb");
+        setTimeout(function(){ $("#img_err").fadeOut(); }, 3000);
+        $("#image").focus();
+        return false;
+    }
+    if (status=="") {
+        $("#status_err").fadeIn().html("Required");
+        setTimeout(function(){ $("#status_err").fadeOut(); }, 3000);
+        $("#status").focus();
+        return false;
+    }
+    else
+    { 
+        var datastring="category_name="+category_name+"&status="+status+"&sub_category="+sub_category;
+        // alert(datastring);
+        $.ajax({
+            type:"POST",
+            url:"{{ route('admin.sub-category.store') }}",
+            data  :formdata,
+            cache :false,
+            processData: false,
+            contentType: false,     
+            success:function(returndata)
+            {
+                document.getElementById("form-submit").reset();
                 var oTable = $('#zero_config').dataTable(); 
                 oTable.fnDraw(false);
                 toastr.success(returndata.success);
-                
-                // location.reload();
-                // $("#pay").val("");
-                }
-            });
-        }
-    })
+            }
+        });
+    }
+})
 </script>
 @endsection

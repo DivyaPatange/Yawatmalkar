@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Admin\BannerImage;
-use App\Models\Admin\Page;
+use App\Models\Admin\Category;
 
 class BannerImageController extends Controller
 {
@@ -22,14 +22,14 @@ class BannerImageController extends Controller
     public function index()
     {
         $bannerImage = BannerImage::all();
-        $pages = Page::where('status', 1)->get();
+        $categories = Category::where('status', 1)->get();
         if(request()->ajax()) {
             return datatables()->of($bannerImage)
-            ->addColumn('page_name', function($row){
-                $page = Page::where('id', $row->page_id)->first();
-                if(!empty($page))
+            ->addColumn('category_id', function($row){
+                $category = Category::where('id', $row->category_id)->first();
+                if(!empty($category))
                 {
-                    return $page->page_name;
+                    return $category->category_name;
                 }
             })
             ->addColumn('banner_img', function($row){
@@ -47,7 +47,7 @@ class BannerImageController extends Controller
             ->addIndexColumn()
             ->make(true);
         }
-        return view('admin.banner-img.index', compact('pages'));
+        return view('admin.banner-img.index', compact('categories'));
     }
 
     /**
@@ -69,7 +69,7 @@ class BannerImageController extends Controller
     public function store(Request $request)
     {
         $bannerImage = new BannerImage();
-        $bannerImage->page_id = $request->page_name;
+        $bannerImage->category_id = $request->category_id;
         $bannerImage->status = $request->status;
         $image = $request->file('banner_img');
         if($image != '')
@@ -110,7 +110,7 @@ class BannerImageController extends Controller
         if (!empty($bannerImage)) 
         {
             $banner_img = asset('BannerImg/'.$bannerImage->banner_img);
-            $data = array('id' =>$bannerImage->id,'page_name' =>$bannerImage->page_id,'status' =>$bannerImage->status, 'hidden_img' => $bannerImage->banner_img, 'banner_img' =>$banner_img,
+            $data = array('id' =>$bannerImage->id,'category_id' =>$bannerImage->category_id,'status' =>$bannerImage->status, 'hidden_img' => $bannerImage->banner_img, 'banner_img' =>$banner_img,
             );
         }else{
             $data =0;
@@ -129,7 +129,7 @@ class BannerImageController extends Controller
             $image->move(public_path('BannerImg'), $image_name);
         }
         $input_data = array (
-            'page_id' => $request->page_name,
+            'category_id' => $request->category_id,
             'status' => $request->status,
             'banner_img' => $image_name,
         );

@@ -23,11 +23,11 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="page_name">Page Name <span style="color:red;">*</span><span  style="color:red" id="page_err"> </span></label>
-                                <select name="page_name" class="form-control" id="page_name">
-                                    <option value="">-Select Page Name-</option>
-                                    @foreach($pages as $p)
-                                    <option value="{{ $p->id }}">{{ $p->page_name }}</option>
+                                <label for="category_id">Category <span style="color:red;">*</span><span  style="color:red" id="cat_err"> </span></label>
+                                <select name="category_id" class="form-control" id="category_id">
+                                    <option value="">-Select Category-</option>
+                                    @foreach($categories as $category)
+                                    <option value="{{ $category->id }}">{{ $category->category_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -70,7 +70,7 @@
                             <tr>
                                 <th>Sr. No.</th>
                                 <th>Banner Image</th>
-                                <th>Page Name</th>
+                                <th>Category</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -82,7 +82,7 @@
                             <tr>
                                 <th>Sr. No.</th>
                                 <th>Banner Image</th>
-                                <th>Page Name</th>
+                                <th>Category</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -107,11 +107,11 @@
             <!-- Modal body -->
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="">Page Name<span style="color:red;">*</span></label><span  style="color:red" id="edit_page_err"> </span>
-                    <select name="page_name" id="edit_page_name" class="form-control">
-                        <option value="">-Select Page Name-</option>
-                        @foreach($pages as $p)
-                        <option value="{{ $p->id }}">{{ $p->page_name }}</option>
+                    <label for="edit_category_id">Category <span style="color:red;">*</span></label><span  style="color:red" id="edit_cat_err"> </span>
+                    <select name="category_id" id="edit_category_id" class="form-control">
+                        <option value="">-Select Category-</option>
+                        @foreach($categories as $category)
+                        <option value="{{ $category->id }}">{{ $category->category_name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -166,7 +166,7 @@ $.ajaxSetup({
          columns: [
                   {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false,searchable: false},
                   { data: 'banner_img', name: 'banner_img' },
-                  { data: 'page_name', name: 'page_name' },
+                  { data: 'category_id', name: 'category_id' },
                   { data: 'status', name: 'status' },
                   {data: 'action', name: 'action', orderable: false},
                ],
@@ -189,7 +189,7 @@ $.ajaxSetup({
                     $("#myModal").modal('show');
                     var json = JSON.parse(returndata);
                     $("#id").val(json.id);
-                    $("#edit_page_name").val(json.page_name);
+                    $("#edit_category_id").val(json.category_id);
                     $("#edit_status").val(json.status);
                     $("#hidden_img").val(json.hidden_img);
                     $("#viewImg").attr("href", json.banner_img);
@@ -201,14 +201,14 @@ $.ajaxSetup({
     $('body').on('submit', '#editForm', function (event) {
         event.preventDefault();
         var formdata = new FormData(this);
-        var page_name = $("#edit_page_name").val();
+        var category_id = $("#edit_category_id").val();
         var status = $("#edit_status").val();
         var id = $("#id").val().trim();
         var hidden_img = $("#hidden_img").val();
-        if (page_name == "") {
-            $("#edit_page_err").fadeIn().html("Required");
-            setTimeout(function(){ $("#edit_page_err").fadeOut(); }, 3000);
-            $("#edit_page_name").focus();
+        if (category_id == "") {
+            $("#edit_cat_err").fadeIn().html("Required");
+            setTimeout(function(){ $("#edit_cat_err").fadeOut(); }, 3000);
+            $("#edit_category_id").focus();
             return false;
         }
         if (status=="") {
@@ -305,11 +305,11 @@ $.ajaxSetup({
         event.preventDefault();
         var formdata = new FormData(this);
         // alert(formdata);
-        var page_name = $("#page_name").val();
-        if (page_name=="") {
-            $("#page_err").fadeIn().html("Required");
-            setTimeout(function(){ $("#page_err").fadeOut(); }, 3000);
-            $("#page_name").focus();
+        var category_id = $("#category_id").val();
+        if (category_id=="") {
+            $("#cat_err").fadeIn().html("Required");
+            setTimeout(function(){ $("#cat_err").fadeOut(); }, 3000);
+            $("#category_id").focus();
             return false;
         }
         var _URL = window.URL || window.webkitURL;
