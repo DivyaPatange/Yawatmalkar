@@ -539,7 +539,7 @@ img{width: 100%;}
   font-size: 14px;
   font-weight: bold;
 }
-.bestDeals img:first-child{height: 7.5rem;padding:10px 8px;}
+.bestDeals img:first-child{height: 13.5rem;padding:10px 8px;}
 .bestDeals .card{padding: 0px 5px;}
 .bestDeals h5{
   width: 96%;

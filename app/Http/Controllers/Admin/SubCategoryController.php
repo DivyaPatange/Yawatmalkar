@@ -105,7 +105,7 @@ class SubCategoryController extends Controller
         $subCategory = SubCategory::where('id', $request->bid)->first();
         if (!empty($subCategory)) 
         {
-            $data = array('id' =>$subCategory->id,'category_name' =>$subCategory->category_id,'status' =>$subCategory->status, 'sub_category' => $subCategory->sub_category
+            $data = array('id' =>$subCategory->id,'category_name' =>$subCategory->category_id,'status' =>$subCategory->status, 'sub_category' => $subCategory->sub_category, 'image' => $subCategory->image, 'description' => $subCategory->description
             );
         }else{
             $data =0;
@@ -116,9 +116,18 @@ class SubCategoryController extends Controller
     public function updateSubCategory(Request $request)
     {
         $subCategory = SubCategory::where('id', $request->id)->first();
+        $image_name = $request->hidden_img;
+        $image = $request->file('image');
+        if($image != '')
+        {
+            $image_name = rand() . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path('subCategoryImg'), $image_name);
+        }
         $input_data = array (
             'category_id' => $request->category_name,
             'sub_category' => $request->sub_category,
+            'image' => $image_name,
+            'description' => $request->description,
             'status' => $request->status,
         );
 

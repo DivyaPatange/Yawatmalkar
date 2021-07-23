@@ -152,19 +152,27 @@ tr.shown td.details-control:before{
                     <input type="text" name="sub_category" class="form-control" id="edit_sub_category" placeholder="Enter Sub-Category">
                 </div>
                 <div class="form-group">
+                    <label for="">Image <span class="text-danger" id="edit_img_err"></span></label>
+                    <input type="file" name="image" id="edit_img" class="form-control">
+                    <input type="hidden" name="hidden_img" id="hidden_img">
+                </div>
+                <div class="form-group">
                     <label for="">Status<span style="color:red;">*</span></label><span  style="color:red" id="edit_status_err"> </span>
                     <select name="status" id="edit_status" class="form-control">
                         <option value="1">Active</option>
                         <option value="0">Inactive</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label for="">Status </label>
+                    <textarea name="description" id="edit_description" class="form-control"></textarea>
             </div>
         
             <!-- Modal footer -->
             <div class="modal-footer">
-            <input type="hidden" name="id" id="id" value="">
-            <button type="button" class="btn btn-success" id="editBrand" onclick="return checkSubmit()">Update</button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                <input type="hidden" name="id" id="id" value="">
+                <button type="submit" class="btn btn-success" id="editBrand">Update</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
             </div>
         </form>
         
@@ -255,59 +263,12 @@ function EditModel(obj,bid)
             $("#edit_category_name").val(json.category_name);
             $("#edit_sub_category").val(json.sub_category);
             $("#edit_status").val(json.status);
-            // $("#adv_amt").val(json.advance_amt);
+            $("#hidden_img").val(json.image);
+            $("#edit_description").val(json.description);
             // $("#total_amt").val(json.total_pay);
         }
         }
     });
-}
-function checkSubmit()
-{
-    var category_name = $("#edit_category_name").val();
-    var sub_category = $("#edit_sub_category").val();
-    var status = $("#edit_status").val();
-    var id = $("#id").val().trim();
-    if (category_name=="") {
-        $("#edit_category_err").fadeIn().html("Required");
-        setTimeout(function(){ $("#edit_category_err").fadeOut(); }, 3000);
-        $("#edit_category_name").focus();
-        return false;
-    }
-    if (sub_category=="") {
-        $("#edit_sub_category_err").fadeIn().html("Required");
-        setTimeout(function(){ $("#edit_sub_category_err").fadeOut(); }, 3000);
-        $("#edit_sub_category").focus();
-        return false;
-    }
-    if (status=="") {
-        $("#edit_status_err").fadeIn().html("Required");
-        setTimeout(function(){ $("#edit_status_err").fadeOut(); }, 3000);
-        $("#edit_status").focus();
-        return false;
-    }
-    else
-    { 
-        $('#editBrand').attr('disabled',true);
-        var datastring="category_name="+category_name+"&status="+status+"&id="+id+"&sub_category="+sub_category;
-        // alert(datastring);
-        $.ajax({
-            type:"POST",
-            url:"{{ url('/admin/sub-category/update') }}",
-            data:datastring,
-            cache:false,        
-            success:function(returndata)
-            {
-            $('#editBrand').attr('disabled',false);
-            $("#myModal").modal('hide');
-            var oTable = $('#zero_config').dataTable(); 
-            oTable.fnDraw(false);
-            toastr.success(returndata.success);
-            
-            // location.reload();
-            // $("#pay").val("");
-            }
-        });
-    }
 }
 
 $('body').on('click', '#delete', function () {
@@ -404,6 +365,79 @@ $('body').on('submit', '#form-submit', function (event) {
             }
         });
     }
+})
+
+$('body').on('submit', '#editform', function (event) {
+    event.preventDefault();
+    var formdata = new FormData(this);
+    var category_name = $("#edit_category_name").val();
+    var sub_category = $("#edit_sub_category").val();
+    var status = $("#edit_status").val();
+    var id = $("#id").val().trim();
+    var photo = $("#edit_img").val();
+    var exts = ['jpg','jpeg','png'];
+    if (category_name=="") {
+        $("#edit_category_err").fadeIn().html("Required");
+        setTimeout(function(){ $("#edit_category_err").fadeOut(); }, 3000);
+        $("#edit_category_name").focus();
+        return false;
+    }
+    if (sub_category=="") {
+        $("#edit_sub_category_err").fadeIn().html("Required");
+        setTimeout(function(){ $("#edit_sub_category_err").fadeOut(); }, 3000);
+        $("#edit_sub_category").focus();
+        return false;
+    }
+    if(photo)
+    {
+        var get_ext = photo.split('.');
+        // reverse name to check extension
+        get_ext = get_ext.reverse();
+        // check file type is valid as given in 'exts' array
+        if ( $.inArray ( get_ext[0].toLowerCase(), exts ) > -1 ){
+            console.log( 'Allowed extension!' );
+        } else {
+            $("#edit_img_err").fadeIn().html("Required Extension are jpg ,jpeg ,png");
+            setTimeout(function(){ $("#edit_img_err").fadeOut(); }, 3000);
+            $("#edit_img").focus();
+            return false;
+        }      
+        var file_size = $('#edit_img')[0].files[0].size;     
+        if(file_size>200000) {
+            $("#edit_img_err").fadeIn().html("File Size should be less than 200kb");
+            setTimeout(function(){ $("#edit_img_err").fadeOut(); }, 3000);
+            $("#edit_img").focus();
+            return false;
+        }
+    }
+    if (status=="") {
+        $("#edit_status_err").fadeIn().html("Required");
+        setTimeout(function(){ $("#edit_status_err").fadeOut(); }, 3000);
+        $("#edit_status").focus();
+        return false;
+    }
+    else
+    { 
+        $('#editBrand').attr('disabled',true);
+        // alert(datastring);
+        $.ajax({
+            type:"POST",
+            url:"{{ url('/admin/sub-category/update') }}",
+            data  :formdata,
+            cache :false,
+            processData: false,
+            contentType: false,         
+            success:function(returndata)
+            {
+                $('#editBrand').attr('disabled',false);
+                $("#myModal").modal('hide');
+                var oTable = $('#zero_config').dataTable(); 
+                oTable.fnDraw(false);
+                toastr.success(returndata.success);
+            }
+        });
+    }
+
 })
 </script>
 @endsection

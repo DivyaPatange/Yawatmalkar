@@ -19,7 +19,7 @@
             <nav class=" col-md-3 nav-menu d-none d-lg-block ml-auto pl-2 align-self-center ">
                 <ul>
                     <li ><a href="{{ url('/') }}">Sign In</a></li>
-                    <li><a href="#"><i class='bx bx-cart' style="font-size:20px;"></i>Cart</a></li>
+                    <li><a href="#"><i class='bx bx-cart' style="font-size:20px;"></i>Cart ({{ \Cart::getTotalQuantity() }})</a></li>
                     <li><a href="#">Orders/Return</a></li>
                 </ul>
             </nav>    

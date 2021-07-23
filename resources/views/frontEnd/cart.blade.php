@@ -1,85 +1,72 @@
 @extends('frontEnd.frontLayout.main')
-@section('title', 'Daily Needs')
+@section('title', 'Cart')
 @section('customcss')
 
 @endsection
 @section('content')
 <main id="main">
-    <div class="container">        
-    </div>
-    <!-- slider section -->
-    <div class="container-fluid px-0">
-        <div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <img class="d-block w-100" src="{{ asset('frontAsset/img/daily needs/Dailyslider.jpg') }}" alt="First slide">
-                </div>
-            </div>
-        </div>
-    </div>
     <!-- our main categories -->
     <section class="container mainCategories mainDailyCategories">
-        <h3 class="pb-5 text-left">Shop From Top Categories</h3>
+        <h3 class="text-left">My Shopping Bag</h3>
+        @if(\Cart::getTotalQuantity()>0)
+			<h4>{{ \Cart::getTotalQuantity()}} Product(s) In Your Cart</h4><br>
+		@else
+			<h4>No Product(s) In Your Cart</h4><br>
+			<a href="{{ url('/') }}" style="margin-bottom:20px">Continue Shopping</a>
+			
+		@endif
         <div class="row card-deck">
-            <div class="col">
-                <a href="doctors">
-                <div class="card">
-                    <img class="card-img-top" src="{{ asset('frontAsset/img/daily needs/vegetables.jpg') }}" alt="Card image cap" width="100%;">
-                    <div class="card-body p-0 text-center">
-                    <!-- <h5 class="card-title">Doctors and Medicine</h5>             -->
-                    </div>
-                </div>
-                </a>
-            </div>
-            <div class="col">
-                <div class="card">
-                <img class="card-img-top" src="{{ asset('frontAsset/img/daily needs/fruits.jpg') }}" alt="Card image cap" width="100%;">
-                <div class="card-body p-0 text-center">
-                    <!-- <h5 class="card-title">Legal Services</h5>             -->
-                </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card">
-                <img class="card-img-top" src="{{ asset('frontAsset/img/daily needs/dairy.jpg') }}" alt="Card image cap" width="100%;">
-                <div class="card-body p-0 text-center">
-                    <!-- <h5 class="card-title">Hospitality and Security Services</h5>             -->
-                </div>
-                </div>
-                </div>
-            <div class="col">
-                <a href="beauty">
-                <div class="card">
-                    <img class="card-img-top" src="{{ asset('frontAsset/img/daily needs/breakfast.jpg') }}" alt="Card image cap" width="100%;">
-                    <div class="card-body p-0 text-center">
-                    <!-- <h5 class="card-title">  Beauty Services</h5>             -->
-                    </div>
-                </div>
-                </a>
-            </div>
-            <div class="col">
-                <div class="card">
-                <img class="card-img-top" src="{{ asset('frontAsset/img/daily needs/masala.jpg') }}" alt="Card image cap" width="100%;">
-                <div class="card-body p-0 text-center">
-                    <!-- <h5 class="card-title">Function and Events</h5>             -->
-                </div>
-                </div>
-                </div>
-            <div class="col">
-                <div class="card">
-                <img class="card-img-top" src="{{ asset('frontAsset/img/daily needs/wafers.jpg') }}" alt="Card image cap" width="100%;">
-                <div class="card-body p-0 text-center">
-                    <!-- <h5 class="card-title">Home and Home Decore</h5>             -->
-                </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="card">
-                <img class="card-img-top" src="{{ asset('frontAsset/img/daily needs/coffe.jpg') }}" alt="Card image cap" width="100%;">
-                <div class="card-body p-0 text-center">
-                    <!-- <h5 class="card-title">Home and Home Decore</h5>             -->
-                </div>
-                </div>
+            <div class="col-md-12">
+                <div class="table-responsive checkout-right animated wow slideInUp" data-wow-delay=".5s">
+                    <table class="timetable_sub">
+                        <thead>
+                            <tr>
+                                <th>Remove</th>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Product Name</th>
+                                <th>Price</th>
+                                <th>Sub-Total</th>
+                            </tr>
+                        </thead>
+                            @foreach($cartCollection as $item)
+                            <tr >
+                                <td class="invert-closeb">
+                                    <form action="{{ route('cart.remove') }}" method="POST">
+                                        {{ csrf_field() }}
+                                        <input type="hidden" value="{{ $item->id }}" id="id" name="id">
+                                        <div class="rem">
+                                            <button class="close1" style="border:none"></button>
+                                        </div>
+                                    </form>
+                                    <!-- script trasfer to main layout -->
+                                    
+                                </td>
+                                <td class="invert-image" width="36%"><a href="{{ url ('detail_view') }}"><img src="ProductImg/{{ $item->attributes->image }}" alt=" " class="img-responsive" /></a></td>
+                                <td class="invert">
+                                    <div class="quantity"> 
+                                        <div class="quantity-select">  
+                                        <form action="{{ route('cart.update') }}" method="POST">
+                                            {{ csrf_field() }}       
+                                            <input type="hidden" value="{{ $item->id}}" id="id" name="id">                  
+                                            <div class="input-group">
+                                                <input type="button" value="-" class="button-minus button" data-field="quantity">
+                                                <input type="number" step="1" value="{{ $item->quantity }}" id="quantity" name="quantity" class="quantity-field">
+                                                <input type="button" value="+" class="button-plus button" data-field="quantity">
+                                                <button class="btn btn-secondary" style="margin-right: 25px;"><i class="glyphicon glyphicon-edit"></i></button>
+                                            </div>
+                                        </form>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="invert">{{ $item->name }}</td>
+                                <td class="invert">&#8377;{{ $item->price }}</td>
+                                <td class="invert">&#8377;{{ \Cart::get($item->id)->getPriceSum() }}</td>
+                            </tr>
+                            @endforeach
+                            
+                    </table>
+                </div>    
             </div>
         </div>   
     </section> 

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\CartController;
 
 // Admin Controller
 use App\Http\Controllers\Auth\AdminLoginController;
@@ -72,8 +73,14 @@ Route::get('/seed', function () {
     return 'DONE'; //Return anything
 });
 
-Route::get('/get-subcategory-list', [DesignController::class, 'getSubcategoryList']);
-Route::get('/{id}', [DesignController::class, 'getCategoryPage']);
+Route::get('/cart', function(){
+    $cartCollection = \Cart::getContent();
+    return view('frontEnd.cart', compact('cartCollection'));
+});
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::prefix('admin')->name('admin.')->group(function() {
     // Admin Authentication Route
@@ -114,9 +121,17 @@ Route::prefix('admin')->name('admin.')->group(function() {
     Route::resource('/products', App\Http\Controllers\Admin\ProductController::class);
 });
 
-Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/get-subcategory-list', [DesignController::class, 'getSubcategoryList']);
+Route::get('/{id}', [DesignController::class, 'getCategoryPage']);
+Route::get('/products-services/{id}', [DesignController::class, 'getProductServices'])->name('products-services');
+
+// Cart Route
+Route::post('/add', [CartController::class, 'add'])->name('cart.store');
+Route::post('/update', [CartController::class, 'update'])->name('cart.update');
+Route::post('/remove', [CartController::class, 'remove'])->name('cart.remove');
+Route::post('/clear', [CartController::class, 'clear'])->name('cart.clear');
+
 Route::prefix('user')->name('user.')->group(function() {
     Route::resource('/profile', ProfileController::class);
     Route::post('profile-details/{id}', [ProfileController::class, 'updateDetails'])->name('profile.update-details');

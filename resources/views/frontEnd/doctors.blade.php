@@ -17,65 +17,16 @@
         <h2 style="font-size:48px;font-weight:bold;text-align:center;color#000;"> <span style="color:#4FBCC6">{{ $cat->category_name }}</span> </h2>
         <div class="container py-5">
             <div class="row card-deck">
+                @foreach($subCat as $sub)
                 <div class="col-12 col-md-3 card text-center px-0" style="background:#F7F7F7;border:none;">
-                    <img src="{{ ('frontAsset/img/dentist.png') }}" alt="">
+                    <img src="{{ asset('subCategoryImg/'.$sub->image) }}" alt="">
                     <div class="card-body px-1 pt-0">
-                        <h4>DENTIST</h4>
-                        <p>It is long established fact that a reader will be distracted by the readable content </p>
+                        <h4>{{ $sub->sub_category }}</h4>
+                        <p>{{ $sub->description }}</p>
+                        <a href="{{ route('products-services', $sub->id) }}">View</a>
                     </div>
                 </div>
-                <div class="col-12 col-md-3 card text-center px-0" style="border:none;">
-                    <img src="{{ ('frontAsset/img/eye.jpg') }}" alt="">
-                    <div class="card-body px-1 pt-0">
-                        <h4>EYE SPECIALIST</h4>
-                        <p>It is long established fact that a reader will be distracted by the readable content </p>
-                    </div>
-                </div>
-                <div class="col-12 col-md-3 card text-center px-0" style="background:#F7F7F7;border:none;">
-                    <img src="{{ ('frontAsset/img/ortho.jpg') }}" alt="">
-                    <div class="card-body px-1 pt-0">
-                        <h4>ORTHO</h4>
-                        <p>It is long established fact that a reader will be distracted by the readable content </p>
-                    </div>
-                </div>
-                <div class="col-12 col-md-3 card text-center px-0" style="border:none;">
-                    <img src="{{ ('frontAsset/img/heart.png') }}" alt="">
-                    <div class="card-body px-1 pt-0">
-                        <h4>CARDIOLOGIST</h4>
-                        <p>It is long established fact that a reader will be distracted by the readable content </p>
-                    </div>
-                </div>
-            </div> 
-
-            <div class="row card-deck pt-5">
-                <div class="col-12 col-md-3 card text-center px-0" style="background:#F7F7F7;border:none;">
-                    <img src="{{ ('frontAsset/img/dentist.png') }}" alt="">
-                    <div class="card-body px-1 pt-0">
-                        <h4>DENTIST</h4>
-                        <p>It is long established fact that a reader will be distracted by the readable content </p>
-                    </div>
-                </div>
-                <div class="col-12 col-md-3 card text-center px-0" style="border:none;">
-                    <img src="{{ ('frontAsset/img/eye.jpg') }}" alt="">
-                    <div class="card-body px-1 pt-0">
-                        <h4>EYE SPECIALIST</h4>
-                        <p>It is long established fact that a reader will be distracted by the readable content </p>
-                    </div>
-                </div>
-                <div class="col-12 col-md-3 card text-center px-0" style="background:#F7F7F7;border:none;">
-                    <img src="{{ ('frontAsset/img/ortho.jpg') }}" alt="">
-                    <div class="card-body px-1 pt-0">
-                        <h4>ORTHO</h4>
-                        <p>It is long established fact that a reader will be distracted by the readable content </p>
-                    </div>
-                </div>
-                <div class="col-12 col-md-3 card text-center px-0" style="border:none;">
-                    <img src="{{ ('frontAsset/img/heart.png') }}" alt="">
-                    <div class="card-body px-1 pt-0">
-                        <h4>CARDIOLOGIST</h4>
-                        <p>It is long established fact that a reader will be distracted by the readable content </p>
-                    </div>
-                </div>
+                @endforeach
             </div> 
         </div>
     </section>

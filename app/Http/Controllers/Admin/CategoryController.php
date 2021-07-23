@@ -69,6 +69,7 @@ class CategoryController extends Controller
             $image->move(public_path('CategoryImg'), $image_name);
         }
         $category->category_img = $image_name;
+        $category->type = $request->type;
         $category->save();
         return response()->json(['success' => 'Category Added Successfully']);
     }
@@ -100,7 +101,7 @@ class CategoryController extends Controller
         $category = Category::where('id', $request->bid)->first();
         if (!empty($category)) 
         {
-            $data = array('id' =>$category->id,'category_name' =>$category->category_name,'status' =>$category->status, 'category_img' => $category->category_img
+            $data = array('id' =>$category->id,'category_name' =>$category->category_name,'status' =>$category->status, 'category_img' => $category->category_img, 'type' => $category->type
             );
         }else{
             $data =0;
@@ -123,6 +124,7 @@ class CategoryController extends Controller
             'category_name' => $request->category_name,
             'status' => $request->status,
             'category_img' => $image_name,
+            'type' => $request->type,
         );
 
         Category::whereId($category->id)->update($input_data);

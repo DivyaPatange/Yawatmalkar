@@ -22,25 +22,35 @@
             <div class="card-body">
                 <form method="POST" id="form-submit" enctype="multipart/form-data">
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label for="category_name">Category <span style="color:red;">*</span><span  style="color:red" id="category_err"> </span></label>
                                 <input type="text" name="category_name" class="form-control" id="category_name" placeholder="Enter Category">
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label for="category_img">Category Image<span style="color:red;">*</span><span  style="color:red" id="img_err"> </span></label>
                                 <input type="file" name="category_img" class="form-control" id="category_img">
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label for="status">Status <span style="color:red;">*</span><span  style="color:red" id="status_err"> </span></label>
                                 <select class="form-control @error('status') is-invalid @enderror" id="status" name="status">
                                     <option value="">-Select Status-</option>
                                     <option value="1">Active</option>
                                     <option value="0">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="type">Type <span style="color:red;">*</span><span  style="color:red" id="type_err"> </span></label>
+                                <select class="form-control @error('type') is-invalid @enderror" id="type" name="type">
+                                    <option value="">-Select-</option>
+                                    <option value="Product">Product</option>
+                                    <option value="Service">Service</option>
                                 </select>
                             </div>
                         </div>
@@ -68,6 +78,7 @@
                                 <th>Image</th>
                                 <th>Category</th>
                                 <th>Status</th>
+                                <th>Type</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -80,6 +91,7 @@
                                 <th>Image</th>
                                 <th>Category</th>
                                 <th>Status</th>
+                                <th>Type</th>
                                 <th>Action</th>
                             </tr>
                         </tfoot>
@@ -118,6 +130,14 @@
                         <option value="0">Inactive</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label for="edit_type">Type <span style="color:red;">*</span><span  style="color:red" id="e_type_err"> </span></label>
+                    <select class="form-control @error('type') is-invalid @enderror" id="edit_type" name="type">
+                        <option value="">-Select-</option>
+                        <option value="Product">Product</option>
+                        <option value="Service">Service</option>
+                    </select>
+                </div>
             </div>
         
             <!-- Modal footer -->
@@ -153,13 +173,14 @@ $.ajaxSetup({
           url: SITEURL,
           type: 'GET',
          },
-         columns: [
-                  {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false,searchable: false},
-                  { data: 'category_img', name: 'category_img' },
-                  { data: 'category_name', name: 'category_name' },
-                  { data: 'status', name: 'status' },
-                  {data: 'action', name: 'action', orderable: false},
-               ],
+        columns: [
+            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false,searchable: false},
+            { data: 'category_img', name: 'category_img' },
+            { data: 'category_name', name: 'category_name' },
+            { data: 'status', name: 'status' },
+            { data: 'type', name: 'type' },
+            { data: 'action', name: 'action', orderable: false},
+        ],
         order: [[0, 'desc']]
       });
 
@@ -174,17 +195,15 @@ $.ajaxSetup({
             cache:false,        
             success:function(returndata)
             {
-                // alert(returndata);
-            if (returndata!="0") {
-                $("#myModal").modal('show');
-                var json = JSON.parse(returndata);
-                $("#id").val(json.id);
-                $("#edit_category_name").val(json.category_name);
-                $("#edit_status").val(json.status);
-                $("#hidden_img").val(json.category_img);
-                // $("#adv_amt").val(json.advance_amt);
-                // $("#total_amt").val(json.total_pay);
-            }
+                if (returndata!="0") {
+                    $("#myModal").modal('show');
+                    var json = JSON.parse(returndata);
+                    $("#id").val(json.id);
+                    $("#edit_category_name").val(json.category_name);
+                    $("#edit_status").val(json.status);
+                    $("#hidden_img").val(json.category_img);
+                    $("#edit_type").val(json.type);
+                }
             }
         });
     }
@@ -194,6 +213,7 @@ $.ajaxSetup({
         var category_name = $("#edit_category_name").val();
         var status = $("#edit_status").val();
         var id = $("#id").val().trim();
+        var type = $("#edit_type").val();
         var photo = $("#edit_category_img").val();
         var exts = ['jpg','jpeg','png'];
         if (category_name=="") {
@@ -206,6 +226,12 @@ $.ajaxSetup({
             $("#edit_status_err").fadeIn().html("Required");
             setTimeout(function(){ $("#edit_status_err").fadeOut(); }, 3000);
             $("#edit_status").focus();
+            return false;
+        }
+        if (type=="") {
+            $("#e_type_err").fadeIn().html("Required");
+            setTimeout(function(){ $("#e_type_err").fadeOut(); }, 3000);
+            $("#edit_type").focus();
             return false;
         }
         if(photo)
@@ -279,6 +305,7 @@ $.ajaxSetup({
         var formdata = new FormData(this);
         var category_name = $("#category_name").val();
         var status = $("#status").val();
+        var type = $("#type").val();
         var photo = $("#category_img").val();
         var exts = ['jpg','jpeg','png'];
         if (category_name=="") {
@@ -320,6 +347,12 @@ $.ajaxSetup({
             $("#status_err").fadeIn().html("Required");
             setTimeout(function(){ $("#status_err").fadeOut(); }, 3000);
             $("#status").focus();
+            return false;
+        }
+        if (type=="") {
+            $("#type_err").fadeIn().html("Required");
+            setTimeout(function(){ $("#type_err").fadeOut(); }, 3000);
+            $("#type").focus();
             return false;
         }
         else
