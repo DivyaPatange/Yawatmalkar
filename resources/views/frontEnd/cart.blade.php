@@ -99,7 +99,13 @@ table tr th {
 				{{ csrf_field() }}
                 <button class="btn btn-success"><span class="glyphicon glyphicon-arrow-left"></span>&nbsp;Clear Cart</button>
             </form>
-                <a href="#" class="btn btn-primary pull-right">Proceed to Checkout<span class="glyphicon glyphicon-chevron-right"></span></a>
+            @guest
+                @if (Route::has('customer.login.submit'))
+                <a href="{{ url('/customer/login') }}" class="btn btn-primary pull-right">Proceed to Checkout<span class="glyphicon glyphicon-chevron-right"></span></a>
+                @endif
+            @else
+            <a href="{{ url('/customer') }}" class="btn btn-primary pull-right">Proceed to Checkout<span class="glyphicon glyphicon-chevron-right"></span></a>
+            @endguest
             </div>
         </div>  
     </section> 

@@ -25,6 +25,9 @@ class RedirectIfAuthenticated
             if ($guard == "admin" && Auth::guard($guard)->check()) {
                 return redirect('/admin');
             }
+            if ($guard == "customer" && Auth::guard($guard)->check()) {
+                return redirect('/customer');
+            }
             if (Auth::guard($guard)->check()) {
                 return redirect(RouteServiceProvider::HOME);
             }

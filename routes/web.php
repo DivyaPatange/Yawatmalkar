@@ -22,6 +22,14 @@ use App\Http\Controllers\User\ProductController;
 use App\Http\Controllers\User\ItemController;
 
 use App\Http\Controllers\DesignController;
+
+use App\Http\Controllers\Auth\CustomerLoginController;
+use App\Http\Controllers\Auth\CustomerController;
+use App\Http\Controllers\Auth\CustomerRegisterController;
+use App\Http\Controllers\Customer\OrderController;
+
+use App\Http\Controllers\GoogleController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -79,6 +87,22 @@ Route::get('/cart', function(){
 });
 
 Auth::routes();
+
+// Socialite Route
+Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
+Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+
+Route::prefix('customer')->name('customer.')->group(function() {
+    // Admin Authentication Route
+    Route::get('/login', [CustomerLoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [CustomerLoginController::class, 'login'])->name('login.submit');
+    Route::get('/register', [CustomerRegisterController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [CustomerRegisterController::class, 'register'])->name('register.submit');
+    Route::get('/', [CustomerController::class, 'index'])->name('dashboard');
+    Route::get('/logout', [CustomerLoginController::class, 'logout'])->name('logout');
+    Route::post('/placeOrder', [OrderController::class, 'placedOrder'])->name('placed.order');
+    Route::get('/orderDetails/{id}', [OrderController::class, 'orderDetails'])->name('order.details');
+});
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
@@ -155,3 +179,4 @@ Route::prefix('user')->name('user.')->group(function() {
     Route::resource('/products', ProductController::class);
     Route::get('get-items-list', [ItemController::class, 'getItemList']);
 });
+
