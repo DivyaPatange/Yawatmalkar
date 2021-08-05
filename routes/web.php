@@ -96,7 +96,7 @@ Route::prefix('customer')->name('customer.')->group(function() {
     Route::get('/logout', [CustomerLoginController::class, 'logout'])->name('logout');
     Route::post('/placeOrder', [OrderController::class, 'placedOrder'])->name('placed.order');
     Route::get('/orderDetails/{id}', [OrderController::class, 'orderDetails'])->name('order.details');
-    Route::get('/save-customer-info', [OrderController::class, 'saveCustomerInfo'])->name('save-customer-info');
+    Route::post('/save-customer-info', [OrderController::class, 'saveCustomerInfo'])->name('save-customer-info');
     Route::post('/payment/{id}', [OrderController::class, 'payment'])->name('payment');
     Route::post('/success', [OrderController::class, 'paymentSuccess'])->name('success');
     Route::get('/payment-success/{id}', [OrderController::class, 'paymentDetail'])->name('payment-success');
@@ -123,6 +123,7 @@ Route::prefix('admin')->name('admin.')->group(function() {
     Route::post('/get-sub-category', [SubCategoryController::class, 'getSubCategory'])->name('get.sub-category');
     Route::post('/sub-category/update', [SubCategoryController::class, 'updateSubCategory']);
     Route::resource('/register', RegisterController::class);
+    Route::post('get-category-type', [RegisterController::class, 'getCategoryInfo'])->name('get-category-type');
     Route::post('/registers/upload-document', [RegisterController::class, 'uploadDocument'])->name('register.upload-document');
     Route::post('/registers/general-info', [RegisterController::class, 'saveGeneralInfo'])->name('register.general-info');
     Route::get('/register/status/{id}', [RegisterController::class, 'status']);

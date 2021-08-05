@@ -7,17 +7,17 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             </button>
-            <h1><a class="navbar-brand" href="index.html"><span class="fa fa-area-chart"></span> Glance<span class="dashboard_text">Design dashboard</span></a></h1>
+            <h1><a class="navbar-brand" href="{{ url('/customer') }}"><span class="fa fa-area-chart"></span> Yawatmalkar<span class="dashboard_text"></span></a></h1>
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="sidebar-menu">
             <li class="header">MAIN NAVIGATION</li>
             <li class="treeview">
-                <a href="index.html">
+                <a href="{{ url('/customer') }}">
                 <i class="fa fa-dashboard"></i> <span>Dashboard</span>
                 </a>
             </li>
-            <li class="treeview">
+            <!-- <li class="treeview">
                 <a href="#">
                 <i class="fa fa-laptop"></i>
                 <span>Components</span>
@@ -99,7 +99,7 @@
             <li class="header">LABELS</li>
             <li><a href="#"><i class="fa fa-angle-right text-red"></i> <span>Important</span></a></li>
             <li><a href="#"><i class="fa fa-angle-right text-yellow"></i> <span>Warning</span></a></li>
-            <li><a href="#"><i class="fa fa-angle-right text-aqua"></i> <span>Information</span></a></li>
+            <li><a href="#"><i class="fa fa-angle-right text-aqua"></i> <span>Information</span></a></li> -->
             </ul>
         </div>
         <!-- /.navbar-collapse -->

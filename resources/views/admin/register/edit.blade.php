@@ -20,7 +20,7 @@
 @section('page_title', 'Edit Profile')
 @section('breadcrumb1', 'Home')
 @section('breadcrumb2')
-<a href="{{ route('admin.doctors.edit', $user->id) }}">Edit Doctor</a>
+<a href="{{ route('admin.register.edit', $user->id) }}">Edit Doctor</a>
 @endsection
 @section('content')
 <div class="row" id="firstStep">

@@ -33,7 +33,7 @@ return [
     'google' => [
         'client_id' => '831999719498-kc187uj4fvmel6ghshd2phgpgqs6grns.apps.googleusercontent.com',
         'client_secret' => 'e0LUPp615qpvLq67VhOldy10',
-        'redirect' => 'http://127.0.0.1:8000/auth/google/callback',
+        'redirect' => 'http://127.0.0.1:9000/auth/google/callback',
     ],
 
 ];

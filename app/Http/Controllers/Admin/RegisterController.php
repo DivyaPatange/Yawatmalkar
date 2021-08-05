@@ -62,6 +62,12 @@ class RegisterController extends Controller
         return view('admin.register.index');
     }
 
+    public function getCategoryInfo(Request $request)
+    {
+        $category = Category::where('id', $request->categoryID)->first();
+        return response()->json(['type' => $category->type]);
+    }
+
 
     /**
      * Show the form for creating a new resource.

@@ -49,6 +49,7 @@
                                 </select>
                             </div>
                         </div>
+                        <input type="hidden" id="category_type">
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Sub-Category <span  style="color:red" id="sub_cat_err"> </span></label>
@@ -430,6 +431,7 @@ $('body').on('click', '#submitForm', function () {
     var password = $("#password").val();
     var from = $("input[name=from]").val();
     var to = $("input[name=to]").val();
+    var category_type = $("#category_type").val();
     var TableData = new Array();
     $('#dynamic_field tr').each(function(row, tr) {
         TableData[row] = {
@@ -464,7 +466,7 @@ $('body').on('click', '#submitForm', function () {
         $("#role").focus();
         return false;
     }
-    if((category_id == 2) || (category_id == "Legal Services") || (category_id == "Beauty"))
+    if(category_type == "Service")
     {
         if (experience=="") {
             $("#experience_err").fadeIn().html("Required");
@@ -479,7 +481,7 @@ $('body').on('click', '#submitForm', function () {
             return false;
         }
     }
-    if(category_id == 1)
+    if(category_type == "Product")
     {
         if (busi_year=="") {
             $("#busi_year_err").fadeIn().html("Required");
@@ -708,9 +710,23 @@ $('body').on('submit', '#form-submit2', function (event) {
 });
 $('#category_id').change(function(){
   var categoryID = $(this).val();  
-  if(categoryID == 1){
-    $(".dailyNeed").removeClass("hidden");
-    $(".doctorDiv").addClass("hidden");
+  if(categoryID){
+        $.ajax({
+            url   :"{{ route('admin.get-category-type') }}",
+            type  :"POST",
+            data  :{categoryID:categoryID},
+            success:function(result){
+                $("#category_type").val(result.type);
+                if(result.type == "Product"){
+                    $(".dailyNeed").removeClass("hidden");
+                    $(".doctorDiv").addClass("hidden");
+                }
+                else{
+                    $(".doctorDiv").removeClass("hidden");
+                    $(".dailyNeed").addClass("hidden");
+                }
+            }
+        })
   }
 });
 </script>
