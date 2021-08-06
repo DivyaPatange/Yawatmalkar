@@ -171,7 +171,6 @@ $('#category').change(function(){
           $.each(res.subCategory,function(key,value){
             $("#navbarDiv").append('<span class="item"><a href="'+key+'" class="nav-link">'+value+'</a></li>');
           });   
-          console.log(res.category_id);
           $('#main').load('/'+res.category_id);
         }else{
           $("#navbarDiv").empty();

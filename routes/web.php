@@ -86,12 +86,6 @@ Route::get('/cart', function(){
     return view('frontEnd.cart', compact('cartCollection'));
 });
 
-Auth::routes();
-
-// Socialite Route
-Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
-Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
-
 Route::prefix('customer')->name('customer.')->group(function() {
     // Admin Authentication Route
     Route::get('/login', [CustomerLoginController::class, 'showLoginForm'])->name('login');
@@ -102,7 +96,17 @@ Route::prefix('customer')->name('customer.')->group(function() {
     Route::get('/logout', [CustomerLoginController::class, 'logout'])->name('logout');
     Route::post('/placeOrder', [OrderController::class, 'placedOrder'])->name('placed.order');
     Route::get('/orderDetails/{id}', [OrderController::class, 'orderDetails'])->name('order.details');
+    Route::get('/save-customer-info', [OrderController::class, 'saveCustomerInfo'])->name('save-customer-info');
+    Route::post('/payment/{id}', [OrderController::class, 'payment'])->name('payment');
+    Route::post('/success', [OrderController::class, 'paymentSuccess'])->name('success');
+    Route::get('/payment-success/{id}', [OrderController::class, 'paymentDetail'])->name('payment-success');
 });
+Auth::routes();
+
+// Socialite Route
+Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
+Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 

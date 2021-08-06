@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="keywords" content="" />
-
+<meta name="csrf-token" content="{{ csrf_token() }}">
 @include('customer.layout.stylesheet')
 @yield('customcss')
 </head> 
@@ -32,6 +32,13 @@
 	</div>
 		
 	@include('customer.layout.scripts')
+	<script>
+	$.ajaxSetup({
+		headers: {
+			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+		}
+	});
+	</script>
 	@yield('customjs')
 </body>
 </html>
